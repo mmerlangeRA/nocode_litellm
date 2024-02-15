@@ -8,6 +8,8 @@ from injector import Injector
 
 from server.routes.health.health_router import health_router
 from server.routes.completion.completion_router import completions_router
+from server.routes.token.token_router import token_router
+from server.routes.summarize.summarize_router import summarize_router 
 from settings.settings import Settings
 
 logger = logging.getLogger(__name__)
@@ -23,6 +25,8 @@ def create_app(root_injector: Injector) -> FastAPI:
 
     app.include_router(health_router)
     app.include_router(completions_router)
+    app.include_router(token_router)
+    app.include_router(summarize_router)
 
     settings = root_injector.get(Settings)
     if settings.server.cors.enabled:

@@ -16,21 +16,6 @@ os.environ["MISTRAL_API_KEY"] = settings().model_keys.mistralai
 
 completions_router = APIRouter(prefix="/v1")
 
-class GenerateTokenBody(BaseModel):
-    admin_key: str
-    user_rights: UserRights
-    model_config= {
-        "json_schema_extra": {
-            "examples": [
-                {
-                    "admin_key":"xxx",
-                    "user_rights": {
-                        "models": ["gpt-3.5-turbo","mistral/mistral-tiny"]}
-                    }
-                ]
-            }
-        }
-
 
 class OpenAIMessage(BaseModel):
     """Inference result, with the source of the message.
@@ -69,14 +54,6 @@ class ChatBody(BaseModel):
         }
     }
 
-
-@completions_router.post("/token", tags=["completion"])
-def get_token(request: Request, body: GenerateTokenBody):
-    if body.admin_key != settings().token.admin_key:
-        raise FORBIDDEN_HTTPEXCEPTION("Invalid admin key "+body.admin_key )
-    return generate_token({
-        "models":body.user_rights.models
-        })
 
 
 @completions_router.post("/completion", tags=["completion"])
