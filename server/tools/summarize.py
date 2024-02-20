@@ -1,7 +1,9 @@
 import os
+import uuid
 from pydantic import BaseModel, Field
 from litellm import completion, ModelResponse, CustomStreamWrapper
 from pyparsing import List
+from server.tools.CustomChatLiteLLM import CustomChatLiteLLM
 from server.tools.get_document_from_url import get_document_from_url
 from server.utils.errors import FORBIDDEN_HTTPEXCEPTION
 from server.utils.tokens import UserRights, generate_token, verify_token
@@ -59,18 +61,6 @@ class SummarizeRequest(BaseModel):
             ]
         }}
 
-async def summarize_map_text(text:str, model:str):
-
-    text_splitter = RecursiveCharacterTextSplitter(
-        chunk_size=1000,
-        chunk_overlap=20,
-        length_function=len,
-        is_separator_regex=False,
-    )
-    docs  = text_splitter.create_documents([text])
-    response =await summarize_refine(docs,model,"french")
-    return response
-
     
 async def summarize_map(lang:str, docs:List[Document], model="gpt-3.5-turbo"):
 
@@ -116,7 +106,6 @@ async def summarize_map(lang:str, docs:List[Document], model="gpt-3.5-turbo"):
     )
     split_docs = text_splitter.split_documents(docs)
     response=map_reduce_chain.run(split_docs)
-    print(response)
     return response
 
 
@@ -141,7 +130,10 @@ async def summarize_refine(lang:str, split_docs:List[Document],model, refine_tem
     return result["output_text"]
 
 async def summarize(docs:List[Document],model, combine_prompt = default_combine_prompt):
-    llm = ChatLiteLLM(model=model)
+    service_id= uuid.UUID('{12345678-1234-5678-1234-567812345678}')
+    print("service_id = "+str(service_id))
+    llm = CustomChatLiteLLM(service_id=service_id,model=model)
+    print("CustomChatLiteLLM initialized it seems")
     map_prompt = """
     Write a concise summary of the following:
     "{text}"
