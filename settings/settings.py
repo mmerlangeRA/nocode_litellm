@@ -1,5 +1,3 @@
-from typing import Literal
-
 from pydantic import BaseModel, Field
 
 from settings.settings_loader import load_active_settings
@@ -87,11 +85,19 @@ class Token(BaseModel):
     secret_key: str
     admin_key: str
 
+class SupaBaseSettrings(BaseModel):
+  url: str
+  anon_key: str
+  service_role_key: str
+
+
 class Settings(BaseModel):
     server: ServerSettings
     data: DataSettings
     model_keys: ModelKeys
     token: Token
+    supabase: SupaBaseSettrings
+
 
 """
 This is visible just for DI or testing purposes.

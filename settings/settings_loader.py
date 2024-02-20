@@ -6,7 +6,7 @@ from collections.abc import Iterable
 from pathlib import Path
 from typing import Any
 
-from pydantic.v1.utils import deep_update, unique_list
+from pydantic.utils import deep_update, unique_list
 
 from server.constants import PROJECT_ROOT_PATH
 from settings.yaml import load_yaml_with_envvars
