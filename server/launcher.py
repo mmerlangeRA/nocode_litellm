@@ -1,5 +1,6 @@
 """FastAPI app creation, logger configuration and main API routes."""
 import logging
+import os
 
 from fastapi import Depends, FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -33,6 +34,11 @@ def create_app(root_injector: Injector) -> FastAPI:
     app.include_router(load_document_router)
 
     settings = root_injector.get(Settings)
+
+    os.environ["LANGCHAIN_API_KEY"] = settings.langsmith.api_key 
+    os.environ["LANGCHAIN_TRACING_V2"] = str(settings.langsmith.enabled).lower() 
+
+
     if settings.server.cors.enabled:
         logger.debug("Setting up CORS middleware")
         app.add_middleware(

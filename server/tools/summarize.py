@@ -3,7 +3,7 @@ import uuid
 from pydantic import BaseModel, Field
 from litellm import completion, ModelResponse, CustomStreamWrapper
 from pyparsing import List
-from server.tools.CustomChatLiteLLM import CustomChatLiteLLM
+from utils.CustomChatLiteLLM import CustomChatLiteLLM
 from server.tools.get_document_from_url import get_document_from_url
 from server.utils.errors import FORBIDDEN_HTTPEXCEPTION
 from server.utils.tokens import UserRights, generate_token, verify_token
@@ -128,26 +128,3 @@ async def summarize_refine(lang:str, split_docs:List[Document],model, refine_tem
     )
     result = chain({"input_documents": split_docs}, return_only_outputs=True)
     return result["output_text"]
-
-async def summarize(docs:List[Document],model, combine_prompt = default_combine_prompt):
-    service_id= uuid.UUID('{12345678-1234-5678-1234-567812345678}')
-    print("service_id = "+str(service_id))
-    llm = CustomChatLiteLLM(service_id=service_id,model=model)
-    print("CustomChatLiteLLM initialized it seems")
-    map_prompt = """
-    Write a concise summary of the following:
-    "{text}"
-    CONCISE SUMMARY:
-    """
-    map_prompt_template = PromptTemplate(template=map_prompt, input_variables=["text"])
-
-    combine_prompt_template = PromptTemplate(template=combine_prompt, input_variables=["text"])
-    summary_chain = load_summarize_chain(llm=llm,
-                                     chain_type='map_reduce',
-                                     map_prompt=map_prompt_template,
-                                     combine_prompt=combine_prompt_template,
-#                                      verbose=True
-                                    )
-    output = summary_chain.run(docs)
-    print(output)
-    return output

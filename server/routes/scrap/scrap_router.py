@@ -4,7 +4,8 @@ from typing import Literal
 from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import BaseModel, Field
 from litellm import completion, ModelResponse, CustomStreamWrapper
-from server.tools.scrapper import BSQueryExecutor, ScrapRequest, scrap_urls_to_Documents
+from tools.web_search import scrap_urls_to_Documents
+from tools.scrapper import BSQueryExecutor, ScrapRequest
 from server.tools.get_document_from_url import get_document_from_url
 from server.tools.summarize import SummarizeRequest, summarize_map, summarize_refine
 from server.utils.errors import FORBIDDEN_HTTPEXCEPTION

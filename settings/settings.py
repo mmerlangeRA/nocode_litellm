@@ -90,6 +90,9 @@ class SupaBaseSettrings(BaseModel):
   anon_key: str
   service_role_key: str
 
+class LangsmithSettings(BaseModel):
+    enabled:bool = False
+    api_key: str
 
 class Settings(BaseModel):
     server: ServerSettings
@@ -97,6 +100,8 @@ class Settings(BaseModel):
     model_keys: ModelKeys
     token: Token
     supabase: SupaBaseSettrings
+    langsmith:LangsmithSettings
+
 
 
 """
@@ -105,7 +110,7 @@ This is visible just for DI or testing purposes.
 Use dependency injection or `settings()` method instead.
 """
 unsafe_settings = load_active_settings()
-print(unsafe_settings)
+#print(unsafe_settings)
 
 """
 This is visible just for DI or testing purposes.
@@ -113,7 +118,7 @@ This is visible just for DI or testing purposes.
 Use dependency injection or `settings()` method instead.
 """
 unsafe_typed_settings = Settings(**unsafe_settings)
-print(unsafe_typed_settings)
+#print(unsafe_typed_settings)
 
 
 def settings() -> Settings:
