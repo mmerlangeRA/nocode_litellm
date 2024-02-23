@@ -1,9 +1,12 @@
+import io
+import json
 from supabase import create_client, Client
 import uuid
 from settings.settings import settings
 from server.utils.errors import INTERNAL_SERVER_ERROR_HTTPEXCEPTION
 import logging
 from datetime import datetime, timezone
+import base64
 
 logger = logging.getLogger(__name__)
 
@@ -54,6 +57,39 @@ def add_user_consumption(user_id:str,token_in: int, token_out:int, service_type:
     }
     return add_row_to_table("consumption", data)
 
+def create_file():
+    payload = {
+    "user_id": "741f03fc-22bc-45f6-b9ba-4a3064893b64",
+    "file_id": "summarized_articles.txt"
+    }
+    array_of_objects = [
+    {"name": "Object1", "value": 123},
+    {"name": "Object2", "value": 456},
+    {"name": "Object3", "value": 789}
+]
+
+    path_on_supastorage = f"{payload['user_id']}/{base64.b64encode(payload['file_id'].encode()).decode()}"
+    file_like_object = io.StringIO()
+
+    # Write the array of objects as a pretty-printed JSON string to the in-memory file
+    json.dump(array_of_objects, file_like_object, indent=4)
+
+    # To simulate passing the file to another service, you might need to seek to the beginning
+    file_like_object.seek(0)
+    with open('output_pretty.txt', 'w') as file:
+    # Dump the array of objects as a formatted JSON string
+        json.dump(array_of_objects, file, indent=4)
+
+
+    with open('output_pretty.txt', 'r') as file:
+        print("path_on_supastorage")
+        print(path_on_supastorage)
+        supabase_client.storage.from_("files").upload(file='output_pretty.txt',path=path_on_supastorage, file_options={"content-type": "text/plain"})
+
+# Simulate reading from this in-memory file (as another service might do)
+    content = file_like_object.read()
+    
+        
 
 
 def create_service(user_id:str,service_type:str,description:str)->int:

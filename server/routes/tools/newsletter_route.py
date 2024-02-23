@@ -4,6 +4,7 @@ from typing import List, Literal
 from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import BaseModel, Field
 from litellm import completion, ModelResponse, CustomStreamWrapper
+from server.database.client import create_file
 from tools.scraping.list_urls import list_all_article_urls_from_json_instructions
 from tools.summarize import summarize_articles_from_urls_returns_sorted_by_rank
 from tools.scraping.scrapper import BSQueryExecutor, QueryModel
@@ -126,6 +127,7 @@ async def newsletter_route(request: Request, body: NewsLetterRequest) :
         print(urls)
         #summarize and sort
         sorted_list = await summarize_articles_from_urls_returns_sorted_by_rank(urls,instructions_for_ranking,model=model)
+        
         return {"response":sorted_list}
     except Exception as e:
         raise INTERNAL_SERVER_ERROR_HTTPEXCEPTION(str(e))
@@ -217,6 +219,10 @@ async def newsletter_route(request: Request, body: NewsLetterRequestString) :
     except Exception as e:
         raise INTERNAL_SERVER_ERROR_HTTPEXCEPTION(str(e))
 
+
+@newsletter_router.get("/test", tags=["newsletter"])
+async def newsletter_route(request: Request) :
+    create_file()
 
 @newsletter_router.get("/create_newsletter", tags=["newsletter"])
 async def newsletter_route(request: Request) :
