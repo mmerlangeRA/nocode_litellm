@@ -8,11 +8,12 @@ from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain.agents import AgentExecutor, create_openai_functions_agent
 from langchain_openai import ChatOpenAI
 from pydantic import BaseModel
+from nocode_litellm.tools.scraping.list_urls import list_all_article_urls_from_json_instructions
 from tools.summarize import summarize_text
 from server.services.chat_service import ChatService
 
 from utils.CustomChatLiteLLM import CustomChatLiteLLM
-from tools.scrapper import QueryModel,BSQueryExecutor
+from nocode_litellm.tools.scraping.scrapper import QueryModel,BSQueryExecutor
 from langchain_core.output_parsers.json import parse_json_markdown
 
 
@@ -49,75 +50,6 @@ user_id="12345678-1234-5678-1234-567812345678"
 service=ChatService(user_id=user_id)
 llm = CustomChatLiteLLM(model="gpt-3.5-turbo",service=service, description="wzza")
 
-
-async def list_all_article_urls_from_json_instructions(json_instructions:List[QueryModel]):
-    """Returns structured list of article urls from a list of query models"""
-    href_results={}
-    if isinstance(json_instructions, str):
-        list_instructions = json.loads(json_instructions)
-    else:
-        list_instructions = json_instructions
-    
-    for json_instruction in list_instructions:
-        url = json_instruction.url
-        html_content=  get_html_from_url(url)
-        executor = BSQueryExecutor()
-        list_articles = executor.query(url, html_content, json_instruction.query) 
-        href_results[url]=list_articles[:5]
-    return href_results
-
-
-
-async def summarize_articles_from_urls(urls:List[str],instructions_for_ranking:str,nb_articles:int)->List[Any]:
-    scored_article_results=[]
-    executor = BSQueryExecutor()
-    query=[{
-        "action":"find_all",
-        "tag":"div",
-        "attributes":{"class":"qiota_reserve"},
-        "extract":["text"]
-        }]
-        
-    for url in urls:
-        print("summarizing "+url)
-        docs = AsyncHtmlLoader(url).load()
-        
-        if(len(docs)==0):
-            continue
-        content = docs[0]
-        #print(content)
-        content = executor.query(url, content.page_content, query) 
-        if(len(content)==0):
-            continue
-        html_text:str = content[0]["text"]
-        docs[0].page_content=html_text
-
-        prompt_for_summarization = instructions_for_ranking + """```{text}```. 
-        Important, return only a formatted json with three propertiers: 'summary', 'relevance' and 'insightfulness'. 'relevance' and 'insightfulness' are just integers ranking from 1 to 5.         
-        """
-        try:
-            text = await summarize_text(html_text,prompt_for_summarization)
-            print(text)
-            print("formatting")
-            formatted = parse_json_markdown(text)
-            print(formatted)
-            result={
-                "url":url,
-                "text":formatted.get("summary"),
-                "rank":int(formatted.get("relevance"))+int(formatted.get("insightfulness"))
-            }
-            print(result)
-            scored_article_results.append(result)
-        except Exception as error:
-            # handle the exception
-            print("An exception occurred:", error)
-            print("ERROR***********************")
-    print(scored_article_results)
-    return scored_article_results
-    sorted_array = sorted(scored_article_results, key=lambda x: x.rank, reverse=True)
-    top_articles = sorted_array[:nb_articles]
-    return top_articles
-        
 
 @tool
 async def get_best_article_summaries(json_instructions:List[QueryModel], instructions_for_ranking:str,nb_top_articles:int)->List[Any]:

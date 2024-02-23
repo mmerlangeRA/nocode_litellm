@@ -13,6 +13,7 @@ from server.routes.token.token_router import token_router
 from server.routes.summarize.summarize_router import summarize_router 
 from server.routes.scrap.scrap_router import scrap_router
 from server.routes.load_document.load_document_router import load_document_router 
+from server.routes.tools.newsletter_route import newsletter_router 
 from settings.settings import Settings
 
 logger = logging.getLogger(__name__)
@@ -32,6 +33,7 @@ def create_app(root_injector: Injector) -> FastAPI:
     app.include_router(summarize_router)
     app.include_router(scrap_router)
     app.include_router(load_document_router)
+    app.include_router(newsletter_router)
 
     settings = root_injector.get(Settings)
 

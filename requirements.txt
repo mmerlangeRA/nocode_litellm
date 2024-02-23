@@ -23,6 +23,7 @@ cryptography==42.0.2
 curl_cffi==0.6.0b9
 dataclasses==0.6
 dataclasses-json==0.6.4
+deepl==1.17.0
 Deprecated==1.2.14
 deprecation==2.1.0
 distro==1.9.0

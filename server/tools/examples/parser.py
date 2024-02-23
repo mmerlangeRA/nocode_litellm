@@ -10,7 +10,8 @@ import xml.etree.ElementTree as ET
 from pydantic import BaseModel, Field, validator
 from pydantic import BaseModel
 from typing import List
-from private_gpt.server.chat.chat_service import ChatService, MessageRole, ChatMessage
+
+from server.services.chat_service import ChatService
 
 class BookRecommendation(BaseModel):
     """Provides book recommendations based on specified interest."""

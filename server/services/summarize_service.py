@@ -5,7 +5,7 @@ from litellm import completion, ModelResponse, CustomStreamWrapper,acompletion
 
 
 
-class SummariezService(Service):
+class SummarizeService(Service):
     def __init__(self, user_id:str):
         super().__init__(ServiceTpes.Summarize,user_id)
 

@@ -94,10 +94,14 @@ class LangsmithSettings(BaseModel):
     enabled:bool = False
     api_key: str
 
+class DeeplSettings(BaseModel):
+    api_key: str
+
 class Settings(BaseModel):
     server: ServerSettings
     data: DataSettings
     model_keys: ModelKeys
+    deepl: DeeplSettings
     token: Token
     supabase: SupaBaseSettrings
     langsmith:LangsmithSettings

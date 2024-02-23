@@ -1,8 +1,9 @@
+from typing import List
 from langchain_community.document_loaders import WebBaseLoader, PyPDFLoader,Docx2txtLoader
 from langchain.docstore.document import Document
 from server.utils.file_extension import get_file_extension
 
-async def get_document_from_url(url:str)->Document:
+async def get_Documents_from_url(url:str)->List[Document]:
     file_extension = get_file_extension(url)
     
     if file_extension == 'pdf':
@@ -12,9 +13,10 @@ async def get_document_from_url(url:str)->Document:
     else:
         loader = WebBaseLoader(url)
     
-    content:Document =  loader.load()
+    docs:List[Document] =  loader.load_and_split()
         
-    return content
+    return docs
+
 
 
 """ 
