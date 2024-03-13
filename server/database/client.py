@@ -1,5 +1,6 @@
 import io
 import json
+from typing import List
 from supabase import create_client, Client
 import uuid
 from settings.settings import settings
@@ -29,7 +30,16 @@ def add_row_to_table(table_name: str, data: dict)->int:
     try:
         api_response = supabase_client.table(table_name).insert(data).execute()
         logger.debug("Data inserted successfully in "+table_name)
-        return api_response.data[0].get("id")
+        return api_response.data[0]
+    except Exception as e:
+        print(e)
+        raise INTERNAL_SERVER_ERROR_HTTPEXCEPTION(e)
+
+def add_rows_to_table(table_name: str, data: List[dict])->int:
+    try:
+        api_response = supabase_client.table(table_name).insert(data).execute()
+        logger.debug("Data inserted successfully in "+table_name)
+        return api_response.data
     except Exception as e:
         print(e)
         raise INTERNAL_SERVER_ERROR_HTTPEXCEPTION(e)

@@ -1,0 +1,957 @@
+[
+    {
+        "id": "8c43afed48f9f2f0",
+        "type": "tab",
+        "label": "APIs",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "5c6eb9b510cd2a89",
+        "type": "subflow",
+        "name": "OPENAI_CHAT_COMPLETION",
+        "info": "",
+        "category": "",
+        "in": [
+            {
+                "x": 120,
+                "y": 220,
+                "wires": [
+                    {
+                        "id": "6a5fa9923c8bcfe3"
+                    }
+                ]
+            }
+        ],
+        "out": [
+            {
+                "x": 860,
+                "y": 260,
+                "wires": [
+                    {
+                        "id": "6ff06817dd4dc691",
+                        "port": 0
+                    }
+                ]
+            }
+        ],
+        "env": [],
+        "meta": {},
+        "color": "#DDAA99"
+    },
+    {
+        "id": "8fea2c6a152bf668",
+        "type": "subflow",
+        "name": "DEEPL_CALL",
+        "info": "",
+        "category": "",
+        "in": [
+            {
+                "x": 160,
+                "y": 180,
+                "wires": [
+                    {
+                        "id": "14346047a4b5739b"
+                    }
+                ]
+            }
+        ],
+        "out": [
+            {
+                "x": 840,
+                "y": 220,
+                "wires": [
+                    {
+                        "id": "149a8368511692de",
+                        "port": 0
+                    }
+                ]
+            }
+        ],
+        "env": [],
+        "meta": {},
+        "color": "#DDAA99"
+    },
+    {
+        "id": "85ea48b9e7365a6c",
+        "type": "global-config",
+        "name": "global-config",
+        "env": [
+            {
+                "name": "OPENAI_API_KEY",
+                "value": "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",
+                "type": "str"
+            },
+            {
+                "name": "DEEPL_API_KEY",
+                "value": "9818e49a-bfaa-6608-4f70-224d88831c2a:fx",
+                "type": "str"
+            }
+        ]
+    },
+    {
+        "id": "6ff06817dd4dc691",
+        "type": "http request",
+        "z": "5c6eb9b510cd2a89",
+        "name": "OPENAI_CHAT_COMPLETION",
+        "method": "POST",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "https://api.openai.com/v1/chat/completions",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 650,
+        "y": 260,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "6a5fa9923c8bcfe3",
+        "type": "function",
+        "z": "5c6eb9b510cd2a89",
+        "name": "setHeader",
+        "func": "\nlet apiKey = env.get(\"OPENAI_API_KEY\"); // Use env.get to retrieve environment variable\nmsg.headers = {\n    \"Authorization\": \"Bearer \" + apiKey,\n    \"Content-Type\":\"application/json\"\n};\n\nconsole.log(msg)\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 290,
+        "y": 220,
+        "wires": [
+            [
+                "6ff06817dd4dc691"
+            ]
+        ]
+    },
+    {
+        "id": "14346047a4b5739b",
+        "type": "function",
+        "z": "8fea2c6a152bf668",
+        "name": "setHeader",
+        "func": "\nlet apiKey = env.get(\"DEEPL_API_KEY\"); // Use env.get to retrieve environment variable\nmsg.headers = {\n    \"Authorization\": \"DeepL-Auth-Key \" + apiKey,\n    \"Content-Type\":\"application/json\"\n};\n\nconsole.log(msg)\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 310,
+        "y": 180,
+        "wires": [
+            [
+                "149a8368511692de"
+            ]
+        ]
+    },
+    {
+        "id": "149a8368511692de",
+        "type": "http request",
+        "z": "8fea2c6a152bf668",
+        "name": "DEEPL_COMPLETION",
+        "method": "POST",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "https://api-free.deepl.com/v2/translate",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 580,
+        "y": 160,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "87bd706a.aec93",
+        "type": "comment",
+        "z": "8c43afed48f9f2f0",
+        "name": "Create an HTTP Endpoint",
+        "info": "The `HTTP In` and `HTTP Response` pair of nodes are the starting point for all HTTP endpoints you create.\n\nAny flow that starts with an `HTTP In` node must have a path to an `HTTP Response` node otherwise requests will eventually timeout.\n\nThe `HTTP Response` node uses the `payload` property of messages it receives as the body of the response. Other properties can be used to further customize the response - they are covered in other recipes.\n\nThe `Template` node provides a convenient way to embed a body of content into a flow. It may be desirable to maintain such static content outside of the flow.\n\nSee Node-RED cookbook [item](https://cookbook.nodered.org/http/create-an-http-endpoint) for details.",
+        "x": 710,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "7f10afe.b1faa5",
+        "type": "http in",
+        "z": "8c43afed48f9f2f0",
+        "name": "",
+        "url": "/hello2",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 490,
+        "y": 300,
+        "wires": [
+            [
+                "db134063.83b7a"
+            ]
+        ]
+    },
+    {
+        "id": "d5ce67fc.e6e608",
+        "type": "http response",
+        "z": "8c43afed48f9f2f0",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 870,
+        "y": 300,
+        "wires": []
+    },
+    {
+        "id": "5a89ce70.db6d5",
+        "type": "http request",
+        "z": "8c43afed48f9f2f0",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "http://localhost:1880/hello",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "x": 630,
+        "y": 440,
+        "wires": [
+            [
+                "18b48ed8.1072e1"
+            ]
+        ]
+    },
+    {
+        "id": "31f7aabb.3fbe06",
+        "type": "inject",
+        "z": "8c43afed48f9f2f0",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 480,
+        "y": 440,
+        "wires": [
+            [
+                "5a89ce70.db6d5"
+            ]
+        ]
+    },
+    {
+        "id": "18b48ed8.1072e1",
+        "type": "debug",
+        "z": "8c43afed48f9f2f0",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 790,
+        "y": 440,
+        "wires": []
+    },
+    {
+        "id": "3c61c12c.5abaae",
+        "type": "comment",
+        "z": "8c43afed48f9f2f0",
+        "name": "Send HTTP request: http://localhost:1880/hello",
+        "info": "`http request` node can be used to make an **HTTP GET** request.\n\nSee Node-RED cookbook [item](https://cookbook.nodered.org/http/simple-get-request) for details.",
+        "x": 540,
+        "y": 360,
+        "wires": []
+    },
+    {
+        "id": "db134063.83b7a",
+        "type": "template",
+        "z": "8c43afed48f9f2f0",
+        "name": "page",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "html",
+        "syntax": "mustache",
+        "template": "<html>\n    <head></head>\n    <body>\n        <h1>Hello World!</h1>\n    </body>\n</html>",
+        "output": "str",
+        "x": 750,
+        "y": 300,
+        "wires": [
+            [
+                "d5ce67fc.e6e608"
+            ]
+        ]
+    },
+    {
+        "id": "83e766b1.154438",
+        "type": "http request",
+        "z": "8c43afed48f9f2f0",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "x": 630,
+        "y": 520,
+        "wires": [
+            [
+                "188bc18.5487a3f"
+            ]
+        ]
+    },
+    {
+        "id": "89c4d7a7.f8d798",
+        "type": "inject",
+        "z": "8c43afed48f9f2f0",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "url",
+                "v": "http://localhost:1880/hello",
+                "vt": "str"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 480,
+        "y": 520,
+        "wires": [
+            [
+                "83e766b1.154438"
+            ]
+        ]
+    },
+    {
+        "id": "188bc18.5487a3f",
+        "type": "debug",
+        "z": "8c43afed48f9f2f0",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 790,
+        "y": 520,
+        "wires": []
+    },
+    {
+        "id": "a65364a3.c72a58",
+        "type": "comment",
+        "z": "8c43afed48f9f2f0",
+        "name": "Set URL in HTTP request node setting panel",
+        "info": "`http request` node can be used to make an **HTTP GET** request.\n\nSee Node-RED cookbook [item](https://cookbook.nodered.org/http/simple-get-request) for details.",
+        "x": 730,
+        "y": 400,
+        "wires": []
+    },
+    {
+        "id": "47396a8e.6804f4",
+        "type": "comment",
+        "z": "8c43afed48f9f2f0",
+        "name": "Set URL via url property of input message of HTTP request node",
+        "info": "Target URL of `http request` node can be specified via `url` property of input message.\n\nSee Node-RED cookbook [item](https://cookbook.nodered.org/http/set-request-url) for details.",
+        "x": 790,
+        "y": 480,
+        "wires": []
+    },
+    {
+        "id": "033b8ee9a859e231",
+        "type": "http in",
+        "z": "8c43afed48f9f2f0",
+        "name": "",
+        "url": "/openai",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 390,
+        "y": 600,
+        "wires": [
+            [
+                "90c872a230c8c3f3"
+            ]
+        ]
+    },
+    {
+        "id": "7827a23a5b6ff4da",
+        "type": "http request",
+        "z": "8c43afed48f9f2f0",
+        "name": "OPENAI_CHAT_COMPLETION",
+        "method": "POST",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "https://api.openai.com/v1/chat/completions",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 910,
+        "y": 560,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "aced81bb625ac8f6",
+        "type": "debug",
+        "z": "8c43afed48f9f2f0",
+        "name": "debug 1",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1220,
+        "y": 480,
+        "wires": []
+    },
+    {
+        "id": "90c872a230c8c3f3",
+        "type": "change",
+        "z": "8c43afed48f9f2f0",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "{   \"model\": \"gpt-3.5-turbo\",   \"messages\": [     { \"role\": \"system\", \"content\": \"You are a helpful assistant.\" },     { \"role\": \"user\", \"content\": \"Hello\" }   ] }",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 620,
+        "y": 680,
+        "wires": [
+            [
+                "4bbbbfca64ddca97"
+            ]
+        ]
+    },
+    {
+        "id": "7957da18cfcb0d05",
+        "type": "http response",
+        "z": "8c43afed48f9f2f0",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 1290,
+        "y": 620,
+        "wires": []
+    },
+    {
+        "id": "ce541234cb08d8aa",
+        "type": "change",
+        "z": "8c43afed48f9f2f0",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "payload.choices",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1140,
+        "y": 680,
+        "wires": [
+            [
+                "7957da18cfcb0d05"
+            ]
+        ]
+    },
+    {
+        "id": "4d74cf11b997d13a",
+        "type": "inject",
+        "z": "8c43afed48f9f2f0",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 420,
+        "y": 700,
+        "wires": [
+            [
+                "90c872a230c8c3f3"
+            ]
+        ]
+    },
+    {
+        "id": "4bbbbfca64ddca97",
+        "type": "subflow:5c6eb9b510cd2a89",
+        "z": "8c43afed48f9f2f0",
+        "name": "",
+        "x": 870,
+        "y": 680,
+        "wires": [
+            [
+                "ce541234cb08d8aa",
+                "aced81bb625ac8f6"
+            ]
+        ]
+    },
+    {
+        "id": "305e80248b602617",
+        "type": "subflow:8fea2c6a152bf668",
+        "z": "8c43afed48f9f2f0",
+        "name": "",
+        "x": 770,
+        "y": 840,
+        "wires": [
+            [
+                "15958ad23b10ef3a",
+                "c0fd99d1ac51baf2"
+            ]
+        ]
+    },
+    {
+        "id": "792ba606c6d2761b",
+        "type": "change",
+        "z": "8c43afed48f9f2f0",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "{   \"text\": [     \"Hello, world!\"   ],   \"target_lang\": \"DE\" }",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 580,
+        "y": 840,
+        "wires": [
+            [
+                "305e80248b602617"
+            ]
+        ]
+    },
+    {
+        "id": "bc4068602dea0b3f",
+        "type": "inject",
+        "z": "8c43afed48f9f2f0",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 380,
+        "y": 840,
+        "wires": [
+            [
+                "792ba606c6d2761b"
+            ]
+        ]
+    },
+    {
+        "id": "15958ad23b10ef3a",
+        "type": "debug",
+        "z": "8c43afed48f9f2f0",
+        "name": "debug 2",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 980,
+        "y": 920,
+        "wires": []
+    },
+    {
+        "id": "c0fd99d1ac51baf2",
+        "type": "change",
+        "z": "8c43afed48f9f2f0",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "payload.translations[0]",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1000,
+        "y": 840,
+        "wires": [
+            [
+                "a8e2150ba3c2489e"
+            ]
+        ]
+    },
+    {
+        "id": "a8e2150ba3c2489e",
+        "type": "http response",
+        "z": "8c43afed48f9f2f0",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 1170,
+        "y": 820,
+        "wires": []
+    },
+    {
+        "id": "3cae2d7cf28a23d2",
+        "type": "http in",
+        "z": "8c43afed48f9f2f0",
+        "name": "",
+        "url": "/deepl",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 390,
+        "y": 780,
+        "wires": [
+            [
+                "792ba606c6d2761b"
+            ]
+        ]
+    },
+    {
+        "id": "7fbd6d7ba213d96d",
+        "type": "http in",
+        "z": "8c43afed48f9f2f0",
+        "name": "",
+        "url": "/translate",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 280,
+        "y": 980,
+        "wires": [
+            [
+                "f577854afad41d66",
+                "a6fb32798f918a2a"
+            ]
+        ]
+    },
+    {
+        "id": "de134f828f955834",
+        "type": "switch",
+        "z": "8c43afed48f9f2f0",
+        "name": "IfForOpenAI",
+        "property": "isForOpenAI",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "1",
+                "vt": "str"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 770,
+        "y": 1060,
+        "wires": [
+            [
+                "e0e8367ae2624aea"
+            ],
+            [
+                "1d8978d2c021fadf"
+            ]
+        ]
+    },
+    {
+        "id": "f577854afad41d66",
+        "type": "function",
+        "z": "8c43afed48f9f2f0",
+        "name": "CheckIfForOpenAI",
+        "func": "const openai_langs=['EN','FR']\nconst targetLang = msg.payload.target_lang.toUpperCase()\nconst text = msg.payload.text\nconst isForOpenAI =  openai_langs.includes(targetLang)\n\nif (isForOpenAI){\n    const userMessage = \"Translate this text into \" + targetLang+\". Just return the translation. Here is the text:\"+text\n    msg.payload = { \"model\": \"gpt-3.5-turbo\", \"messages\": [{ \"role\": \"system\", \"content\": \"You are a helpful assistant.\" }, { \"role\": \"user\", \"content\": userMessage }] }\n}else{\n    msg.payload.text = [text]\n}\nmsg.isForOpenAI = isForOpenAI ? 1 : 0\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 570,
+        "y": 960,
+        "wires": [
+            [
+                "de134f828f955834"
+            ]
+        ]
+    },
+    {
+        "id": "1d8978d2c021fadf",
+        "type": "subflow:8fea2c6a152bf668",
+        "z": "8c43afed48f9f2f0",
+        "name": "",
+        "x": 1010,
+        "y": 1140,
+        "wires": [
+            [
+                "9dd7e090d3d8d709"
+            ]
+        ]
+    },
+    {
+        "id": "e0e8367ae2624aea",
+        "type": "subflow:5c6eb9b510cd2a89",
+        "z": "8c43afed48f9f2f0",
+        "name": "",
+        "x": 1015.6666259765625,
+        "y": 1009,
+        "wires": [
+            [
+                "11ef870ad3465dae"
+            ]
+        ]
+    },
+    {
+        "id": "a1e98b1aa1936452",
+        "type": "debug",
+        "z": "8c43afed48f9f2f0",
+        "name": "debug 3",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1680,
+        "y": 1140,
+        "wires": []
+    },
+    {
+        "id": "a315b1e56d7926ef",
+        "type": "change",
+        "z": "8c43afed48f9f2f0",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "{   \"text\":     \"Hello, boy!\"   ,   \"target_lang\": \"DE\" }",
+                "tot": "json"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 400,
+        "y": 1160,
+        "wires": [
+            [
+                "f577854afad41d66"
+            ]
+        ]
+    },
+    {
+        "id": "c8978b47ce06d7fd",
+        "type": "inject",
+        "z": "8c43afed48f9f2f0",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 200,
+        "y": 1160,
+        "wires": [
+            [
+                "a315b1e56d7926ef"
+            ]
+        ]
+    },
+    {
+        "id": "11ef870ad3465dae",
+        "type": "change",
+        "z": "8c43afed48f9f2f0",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload.translation",
+                "pt": "msg",
+                "to": "payload.choices[0].message.content",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1320,
+        "y": 1000,
+        "wires": [
+            [
+                "1bc756e49b30e72c"
+            ]
+        ]
+    },
+    {
+        "id": "9dd7e090d3d8d709",
+        "type": "change",
+        "z": "8c43afed48f9f2f0",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload.translation",
+                "pt": "msg",
+                "to": "payload.translations[0].text",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1340,
+        "y": 1140,
+        "wires": [
+            [
+                "a1e98b1aa1936452",
+                "1bc756e49b30e72c"
+            ]
+        ]
+    },
+    {
+        "id": "1bc756e49b30e72c",
+        "type": "http response",
+        "z": "8c43afed48f9f2f0",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 1690,
+        "y": 1020,
+        "wires": []
+    },
+    {
+        "id": "a6fb32798f918a2a",
+        "type": "debug",
+        "z": "8c43afed48f9f2f0",
+        "name": "debug 4",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 320,
+        "y": 920,
+        "wires": []
+    }
+]

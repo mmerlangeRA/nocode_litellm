@@ -1,5 +1,5 @@
 from typing import List
-from langchain_community.document_loaders import WebBaseLoader, PyPDFLoader,Docx2txtLoader
+from langchain_community.document_loaders import WebBaseLoader, PyPDFLoader,Docx2txtLoader,UnstructuredPowerPointLoader
 from langchain.docstore.document import Document
 from server.utils.file_extension import get_file_extension
 
@@ -28,16 +28,15 @@ async def get_file_extension_from_url(url:str)->str:
 
 async def get_Documents_from_url(url:str)->List[Document]:
     file_extension = await get_file_extension_from_url(url)
-    print(file_extension)
-    if file_extension == '.pdf':
-        loader = PyPDFLoader(url)
-    elif file_extension == '.docx':
-        loader = Docx2txtLoader(url)
-    else:
-        loader = WebBaseLoader(url)
-    
+    extension_to_loader = {
+    '.pdf':PyPDFLoader,
+    '.docx': Docx2txtLoader,
+    '.pptx': UnstructuredPowerPointLoader,
+    '.html': WebBaseLoader
+}
+    loader = extension_to_loader.get(file_extension,WebBaseLoader)(url)
+    #add custom RecursiveCharacterTextSplitter ?
     docs:List[Document] =  loader.load_and_split()
-        
     return docs
 
 

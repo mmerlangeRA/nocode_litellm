@@ -14,7 +14,10 @@ from server.routes.summarize.summarize_router import summarize_router
 from server.routes.scrap.scrap_router import scrap_router
 from server.routes.load_document.load_document_router import load_document_router 
 from server.routes.tools.newsletter_route import newsletter_router 
+from server.routes.rag.rag_router import rag_router 
+from server.routes.ppt.ppt_router import ppt_router 
 from settings.settings import Settings
+from fastapi.staticfiles import StaticFiles
 
 logger = logging.getLogger(__name__)
 
@@ -27,6 +30,7 @@ def create_app(root_injector: Injector) -> FastAPI:
 
     app = FastAPI(dependencies=[Depends(bind_injector_to_request)])
 
+    app.mount("/static", StaticFiles(directory="static"), name="static")
     app.include_router(health_router)
     app.include_router(completions_router)
     app.include_router(token_router)
@@ -34,6 +38,8 @@ def create_app(root_injector: Injector) -> FastAPI:
     app.include_router(scrap_router)
     app.include_router(load_document_router)
     app.include_router(newsletter_router)
+    app.include_router(rag_router)
+    app.include_router(ppt_router)
 
     settings = root_injector.get(Settings)
 

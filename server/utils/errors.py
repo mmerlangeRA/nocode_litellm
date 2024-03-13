@@ -30,6 +30,11 @@ class CONFLICT_HTTPEXCEPTION(CUSTOM_HTTPEXCEPTION):
     def __init__(self, message):
         super().__init__(message, 409)
 
+class PAYLOAD_TOO_LARGE_HTTPEXCEPTION(CUSTOM_HTTPEXCEPTION):
+    def __init__(self, message):
+        super().__init__(message, 413)
+
 class INTERNAL_SERVER_ERROR_HTTPEXCEPTION(CUSTOM_HTTPEXCEPTION):
     def __init__(self, message):
         super().__init__(message, 500)
+

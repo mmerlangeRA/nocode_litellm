@@ -1,0 +1,1176 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "FastAPI",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "tags": [
+          "Health"
+        ],
+        "summary": "Health",
+        "description": "Return ok if the system is up.",
+        "operationId": "health_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/completion": {
+      "post": {
+        "tags": [
+          "completion"
+        ],
+        "summary": "Completion Route",
+        "operationId": "completion_route_v1_completion_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChatBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/v1/token": {
+      "post": {
+        "tags": [
+          "token"
+        ],
+        "summary": "Get Token",
+        "operationId": "get_token_v1_token_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenerateTokenBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/summarize_url": {
+      "post": {
+        "tags": [
+          "summarize"
+        ],
+        "summary": "Summarize Route",
+        "operationId": "summarize_route_v1_summarize_url_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SummarizeRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/v1/summarize_pdf_or_docx": {
+      "post": {
+        "tags": [
+          "summarize"
+        ],
+        "summary": "Summarize Route",
+        "operationId": "summarize_route_v1_summarize_pdf_or_docx_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SummarizeRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/v1/scrap": {
+      "post": {
+        "tags": [
+          "scrap"
+        ],
+        "summary": "Load Route",
+        "operationId": "load_route_v1_scrap_post",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Url"
+            },
+            "name": "url",
+            "in": "query"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ScrapRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/v1/load": {
+      "post": {
+        "tags": [
+          "load document"
+        ],
+        "summary": "Load Doc Route",
+        "operationId": "load_doc_route_v1_load_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/v1/tools/create_newsletter": {
+      "get": {
+        "tags": [
+          "newsletter"
+        ],
+        "summary": "Newsletter Route",
+        "operationId": "newsletter_route_v1_tools_create_newsletter_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "newsletter"
+        ],
+        "summary": "Newsletter Route",
+        "operationId": "newsletter_route_v1_tools_create_newsletter_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewsLetterRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/tools/create_newsletter_string": {
+      "post": {
+        "tags": [
+          "newsletter"
+        ],
+        "summary": "Newsletter Route",
+        "operationId": "newsletter_route_v1_tools_create_newsletter_string_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewsLetterRequestString"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/tools/test": {
+      "get": {
+        "tags": [
+          "newsletter"
+        ],
+        "summary": "Newsletter Route",
+        "operationId": "newsletter_route_v1_tools_test_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/rag/ingest": {
+      "post": {
+        "tags": [
+          "rag"
+        ],
+        "summary": "Ingest Route",
+        "operationId": "ingest_route_v1_rag_ingest_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IngestRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/v1/rag/file_items_from_file": {
+      "post": {
+        "tags": [
+          "rag"
+        ],
+        "summary": "Ingest Route",
+        "operationId": "ingest_route_v1_rag_file_items_from_file_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FileItemsRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/v1/rag/query": {
+      "post": {
+        "tags": [
+          "rag"
+        ],
+        "summary": "Query Route",
+        "operationId": "query_route_v1_rag_query_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QueryRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/v1/ppt/generate": {
+      "post": {
+        "tags": [
+          "ppt"
+        ],
+        "summary": "Ppt Generation Route",
+        "description": "Generate a slide presentation",
+        "operationId": "ppt_generation_route_v1_ppt_generate_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PPTCreationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Action": {
+        "properties": {
+          "action": {
+            "type": "string",
+            "title": "Action"
+          },
+          "tag": {
+            "type": "string",
+            "title": "Tag"
+          },
+          "attributes": {
+            "type": "object",
+            "title": "Attributes"
+          },
+          "extract": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Extract"
+          },
+          "children": {
+            "items": {},
+            "type": "array",
+            "title": "Children"
+          }
+        },
+        "type": "object",
+        "required": [
+          "action",
+          "tag"
+        ],
+        "title": "Action"
+      },
+      "ChatBody": {
+        "properties": {
+          "model": {
+            "type": "string",
+            "title": "Model"
+          },
+          "messages": {
+            "items": {
+              "$ref": "#/components/schemas/OpenAIMessage"
+            },
+            "type": "array",
+            "title": "Messages"
+          },
+          "include_sources": {
+            "type": "boolean",
+            "title": "Include Sources",
+            "default": true
+          },
+          "stream": {
+            "type": "boolean",
+            "title": "Stream",
+            "default": false
+          },
+          "model_config": {
+            "type": "object",
+            "title": "Model Config",
+            "default": {
+              "json_schema_extra": {
+                "examples": [
+                  {
+                    "messages": [
+                      {
+                        "role": "system",
+                        "content": "You are a rapper. Always answer with a rap."
+                      },
+                      {
+                        "role": "user",
+                        "content": "How do you fry an egg?"
+                      }
+                    ],
+                    "stream": false,
+                    "model": "gpt-3.5-turbo"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "type": "object",
+        "required": [
+          "model",
+          "messages"
+        ],
+        "title": "ChatBody"
+      },
+      "FileItemsRequest": {
+        "properties": {
+          "url": {
+            "type": "string",
+            "title": "Url"
+          },
+          "file_id": {
+            "type": "string",
+            "title": "File Id"
+          },
+          "embeddingsProvider": {
+            "type": "string",
+            "title": "Embeddingsprovider"
+          },
+          "user_id": {
+            "type": "string",
+            "title": "User Id"
+          }
+        },
+        "type": "object",
+        "title": "FileItemsRequest",
+        "examples": [
+          {
+            "url": "https://monpdf.fr",
+            "file_id": "supabase id",
+            "embeddingsProvider": "openai",
+            "user_id": "741f03fc-22bc-45f6-b9ba-4a3064893b64"
+          }
+        ]
+      },
+      "GenerateTokenBody": {
+        "properties": {
+          "admin_key": {
+            "type": "string",
+            "title": "Admin Key"
+          },
+          "user_rights": {
+            "$ref": "#/components/schemas/UserRights"
+          },
+          "model_config": {
+            "type": "object",
+            "title": "Model Config",
+            "default": {
+              "json_schema_extra": {
+                "examples": [
+                  {
+                    "admin_key": "xxx",
+                    "user_rights": {
+                      "models": [
+                        "gpt-3.5-turbo",
+                        "mistral/mistral-tiny"
+                      ]
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "type": "object",
+        "required": [
+          "admin_key",
+          "user_rights"
+        ],
+        "title": "GenerateTokenBody"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "HealthResponse": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "ok"
+            ],
+            "title": "Status",
+            "default": "ok"
+          }
+        },
+        "type": "object",
+        "title": "HealthResponse"
+      },
+      "IngestRequest": {
+        "properties": {
+          "url": {
+            "type": "string",
+            "title": "Url"
+          },
+          "file_id": {
+            "type": "string",
+            "title": "File Id"
+          },
+          "embeddingsProvider": {
+            "type": "string",
+            "title": "Embeddingsprovider"
+          },
+          "user_id": {
+            "type": "string",
+            "title": "User Id"
+          }
+        },
+        "type": "object",
+        "title": "IngestRequest",
+        "examples": [
+          {
+            "url": "https://monpdf.fr",
+            "file_id": "supabase id",
+            "embeddingsProvider": "openai",
+            "user_id": "741f03fc-22bc-45f6-b9ba-4a3064893b64"
+          }
+        ]
+      },
+      "NewsLetterRequest": {
+        "properties": {
+          "instructions_for_finding": {
+            "items": {
+              "$ref": "#/components/schemas/QueryModel"
+            },
+            "type": "array",
+            "title": "Instructions For Finding"
+          },
+          "instructions_for_ranking": {
+            "type": "string",
+            "title": "Instructions For Ranking"
+          },
+          "model": {
+            "type": "string",
+            "title": "Model"
+          },
+          "model_config": {
+            "type": "object",
+            "title": "Model Config",
+            "default": {
+              "json_schema_extra": {
+                "examples": [
+                  {
+                    "instructions_for_finding": [
+                      {
+                        "url": "https://www.ecommercemag.fr/thematique/retail-1220",
+                        "query": [
+                          {
+                            "action": "find_all",
+                            "tag": "article",
+                            "children": [
+                              {
+                                "action": "find_all",
+                                "tag": "div",
+                                "attributes": {
+                                  "class": "titre-bloc"
+                                },
+                                "children": [
+                                  {
+                                    "action": "find_all",
+                                    "tag": "a",
+                                    "extract": [
+                                      "href"
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "url": "https://www.republik-retail.fr/",
+                        "query": [
+                          {
+                            "action": "find_all",
+                            "tag": "a",
+                            "attributes": {
+                              "class": [
+                                "article__listing__itemsalune",
+                                "article__listing__item"
+                              ]
+                            },
+                            "extract": [
+                              "href"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "url": "https://www.journaldunet.com/retail/",
+                        "query": [
+                          {
+                            "action": "find_all",
+                            "tag": "h2",
+                            "attributes": {
+                              "class": "app_title"
+                            },
+                            "children": [
+                              {
+                                "action": "find_all",
+                                "tag": "a",
+                                "extract": [
+                                  "href"
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ],
+                    "model": "gpt-3.5-turbo-instruct",
+                    "instructions_for_ranking": "Write a concise summary in French of the following text delimited by triple backquotes``{text}```Identify one or two original and relevant themes for your monitoring and summarize everything in no more than 100 words.Use line breaks between themes. Rate its relevance and insightfulness. Rate relevance according to to the Retail sector on a scale of 1 to 5, where 1 indicates not relevant and 5 indicates highly relevant: consider factors such as the mention of retail trends, challenges, opportunities, and specific retail industries. Rate its insightfulness regarding economic and technological changes in the Retail sector on a scale of 1 to 5, where 1 indicates no insightful information and 5 indicates highly insightful: consider the depth of analysis, the mention of emerging technologies, economic impacts, and forward-looking statements."
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "type": "object",
+        "required": [
+          "instructions_for_finding",
+          "instructions_for_ranking",
+          "model"
+        ],
+        "title": "NewsLetterRequest"
+      },
+      "NewsLetterRequestString": {
+        "properties": {
+          "instructions_for_ranking": {
+            "type": "string",
+            "title": "Instructions For Ranking"
+          },
+          "model": {
+            "type": "string",
+            "title": "Model"
+          },
+          "model_config": {
+            "type": "object",
+            "title": "Model Config",
+            "default": {
+              "json_schema_extra": {
+                "examples": [
+                  {
+                    "model": "gpt-3.5-turbo-instruct",
+                    "instructions_for_ranking": "Write a concise summary in French of the following text delimited by triple backquotes``{text}```Identify one or two original and relevant themes for your monitoring and summarize everything in no more than 100 words.Use line breaks between themes. Rate its relevance and insightfulness. Rate relevance according to to the Retail sector on a scale of 1 to 5, where 1 indicates not relevant and 5 indicates highly relevant: consider factors such as the mention of retail trends, challenges, opportunities, and specific retail industries. Rate its insightfulness regarding economic and technological changes in the Retail sector on a scale of 1 to 5, where 1 indicates no insightful information and 5 indicates highly insightful: consider the depth of analysis, the mention of emerging technologies, economic impacts, and forward-looking statements."
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "type": "object",
+        "required": [
+          "instructions_for_ranking",
+          "model"
+        ],
+        "title": "NewsLetterRequestString"
+      },
+      "OpenAIMessage": {
+        "properties": {
+          "role": {
+            "type": "string",
+            "enum": [
+              "assistant",
+              "system",
+              "user"
+            ],
+            "title": "Role",
+            "default": "user"
+          },
+          "content": {
+            "type": "string",
+            "title": "Content"
+          }
+        },
+        "type": "object",
+        "title": "OpenAIMessage",
+        "description": "Inference result, with the source of the message.\n\nRole could be the assistant or system\n(providing a default response, not AI generated)."
+      },
+      "PPTCreationRequest": {
+        "properties": {
+          "topic": {
+            "type": "string",
+            "title": "Topic",
+            "description": "the topic of the presentation",
+            "default": ""
+          },
+          "slide_titles": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Slide Titles",
+            "description": "the titles of the slides",
+            "default": []
+          },
+          "slide_contents": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Slide Contents",
+            "description": "the contents of the slides",
+            "default": []
+          }
+        },
+        "type": "object",
+        "title": "PPTCreationRequest",
+        "examples": [
+          {
+            "topic": "Causes of diabet",
+            "slide_titles": [
+              "title 1",
+              "title 2"
+            ],
+            "slide_contents": [
+              "content 1",
+              "content 2"
+            ]
+          }
+        ]
+      },
+      "QueryModel": {
+        "properties": {
+          "url": {
+            "type": "string",
+            "maxLength": 2083,
+            "minLength": 1,
+            "format": "uri",
+            "title": "Url"
+          },
+          "query": {
+            "items": {
+              "$ref": "#/components/schemas/Action"
+            },
+            "type": "array",
+            "title": "Query"
+          }
+        },
+        "type": "object",
+        "required": [
+          "url",
+          "query"
+        ],
+        "title": "QueryModel"
+      },
+      "QueryRequest": {
+        "properties": {
+          "query": {
+            "type": "string",
+            "title": "Query"
+          }
+        },
+        "type": "object",
+        "required": [
+          "query"
+        ],
+        "title": "QueryRequest",
+        "examples": [
+          {
+            "query": "What is the racket Djokovic uses ?"
+          }
+        ]
+      },
+      "ScrapRequest": {
+        "properties": {
+          "json_instructions": {
+            "items": {
+              "$ref": "#/components/schemas/QueryModel"
+            },
+            "type": "array",
+            "title": "Json Instructions"
+          }
+        },
+        "type": "object",
+        "required": [
+          "json_instructions"
+        ],
+        "title": "ScrapRequest",
+        "examples": [
+          {
+            "json_instructions": [
+              {
+                "url": "https://www.ecommercemag.fr/",
+                "query": [
+                  {
+                    "action": "find_all",
+                    "tag": "article",
+                    "children": [
+                      {
+                        "action": "find_all",
+                        "tag": "h3",
+                        "attributes": {
+                          "class": "derniers-jo"
+                        },
+                        "children": [
+                          {
+                            "action": "find_all",
+                            "tag": "a",
+                            "extract": [
+                              "href"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "SummarizeRequest": {
+        "properties": {
+          "prompt": {
+            "type": "string",
+            "title": "Prompt"
+          },
+          "file_url": {
+            "type": "string",
+            "title": "File Url"
+          },
+          "model": {
+            "type": "string",
+            "title": "Model"
+          },
+          "model_config": {
+            "type": "object",
+            "title": "Model Config",
+            "default": {
+              "json_schema_extra": {
+                "examples": [
+                  {
+                    "file_url": "https://www.fhi360.org/sites/default/files/media/documents/cfpb_building_block_activities_what-is-insurance_handout.pdf",
+                    "model": "gpt-3.5-turbo-instruct",
+                    "prompt": "Write a concise summary of the following:{text}CONCISE SUMMARY:"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "type": "object",
+        "required": [
+          "prompt",
+          "file_url",
+          "model"
+        ],
+        "title": "SummarizeRequest"
+      },
+      "UserRights": {
+        "properties": {
+          "models": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Models"
+          }
+        },
+        "type": "object",
+        "required": [
+          "models"
+        ],
+        "title": "UserRights"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    },
+    "securitySchemes": {
+      "HTTPBearer": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
+  }
+}

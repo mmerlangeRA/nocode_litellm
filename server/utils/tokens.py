@@ -21,7 +21,7 @@ class UserRights(BaseModel):
 
 def generate_token(user_rights:UserRights):
     payload = {
-        'exp': datetime.datetime.utcnow() + datetime.timedelta(days=1),
+        'exp': datetime.datetime.utcnow() + datetime.timedelta(days=100),
         'iat': datetime.datetime.utcnow(),
         'scope': user_rights  # Custom payload data to include user rights
     }

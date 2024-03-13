@@ -1,0 +1,78 @@
+{
+  "openapi": "3.1.0",
+  "request_in_body": true,
+  "info": {
+    "title": "ppt",
+    "description": "Generate a pptx presentation from slide descriptions",
+    "version": "v1.0.0"
+  },
+  "name": "pptx_generate",
+  "servers": [
+    {
+      "url": "http://localhost:8001"
+    }
+  ],
+  "paths": {
+    "/v1/ppt/generate": {
+      "post": {
+        "tags": ["ppt"],
+        "summary": "Ppt Generation Route",
+        "description": "Generate a slide presentation",
+        "operationId": "ppt_generation_route_v1_ppt_generate_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "topic": {
+                    "type": "string",
+                    "title": "Topic",
+                    "description": "the topic of the presentation",
+                    "default": ""
+                  },
+                  "slide_titles": {
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array",
+                    "title": "Slide Titles",
+                    "description": "the titles of the slides",
+                    "default": []
+                  },
+                  "slide_contents": {
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array",
+                    "title": "Slide Contents",
+                    "description": "the contents of the slides",
+                    "default": []
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
