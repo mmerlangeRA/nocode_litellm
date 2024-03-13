@@ -65,6 +65,7 @@ class ServerSettings(BaseModel):
     cors: CorsSettings = Field(
         description="CORS configuration", default=CorsSettings(enabled=False)
     )
+    base_url: str = Field(default="http://localhost:8001")
 
 
 class DataSettings(BaseModel):

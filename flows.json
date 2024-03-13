@@ -80,12 +80,12 @@
         "env": [
             {
                 "name": "OPENAI_API_KEY",
-                "value": "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",
+                "value": "",
                 "type": "str"
             },
             {
                 "name": "DEEPL_API_KEY",
-                "value": "9818e49a-bfaa-6608-4f70-224d88831c2a:fx",
+                "value": "",
                 "type": "str"
             }
         ]
