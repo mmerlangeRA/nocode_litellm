@@ -6,7 +6,6 @@ from fastapi import Depends, FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from injector import Injector
 
-
 from server.routes.health.health_router import health_router
 from server.routes.completion.completion_router import completions_router
 from server.routes.token.token_router import token_router
@@ -29,6 +28,9 @@ def create_app(root_injector: Injector) -> FastAPI:
         request.state.injector = root_injector
 
     app = FastAPI(dependencies=[Depends(bind_injector_to_request)])
+
+    if not os.path.exists("static"): 
+        os.makedirs("static")
 
     app.mount("/static", StaticFiles(directory="static"), name="static")
     app.include_router(health_router)
