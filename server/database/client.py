@@ -3,14 +3,34 @@ import json
 from typing import List
 from supabase import create_client, Client
 import uuid
-from settings.settings import settings
+
 from server.utils.errors import INTERNAL_SERVER_ERROR_HTTPEXCEPTION
 import logging
 from datetime import datetime, timezone
 import base64
+from httpx import AsyncClient
 
 logger = logging.getLogger(__name__)
 
+
+class SupabaseClient:
+    def __init__(self,SUPABASE_URL,SUPABASE_KEY):
+        self.url = SUPABASE_URL
+        self.headers = {
+            "apikey": SUPABASE_KEY,
+            "Authorization": f"Bearer {SUPABASE_KEY}",
+            "Content-Type": "application/json",
+        }
+        self.client = AsyncClient(base_url=self.url, headers=self.headers)
+    
+    async def close(self):
+        await self.client.aclose()
+
+def get_supabase_client():
+    return SupabaseClient()
+
+
+'''
 def connect_to_supabase() -> Client:
     try:
         database_settings = settings().supabase
@@ -102,16 +122,29 @@ def create_file():
         
 
 
-def create_service(user_id:str,service_type:str,description:str)->int:
-    data = {
-        "user_id": user_id,
-        "type": service_type,
-        "description":description
-    }
-    return add_row_to_table("services", data)
+
 
 def finish_service(service_id:uuid.UUID)->None:
     data = {
         "finished_at": datetime.now(timezone.utc),
     }
     update_row_to_table("services", service_id, data)
+'''
+
+def create_service(user_id:str,service_type:str,description:str)->int:
+    # data = {
+    #     "user_id": user_id,
+    #     "type": service_type,
+    #     "description":description
+    # }
+    # return add_row_to_table("services", data)
+    return 0
+
+def finish_service(service_id:uuid.UUID)->None:
+    return
+
+def add_row_to_table(table_name: str, data: dict)->int:
+    return 0
+
+def add_rows_to_table(table_name: str, data: List[dict])->int:
+    return 0

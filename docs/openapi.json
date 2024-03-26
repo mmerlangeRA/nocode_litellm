@@ -277,6 +277,45 @@
         ]
       }
     },
+    "/v1/uploadImage": {
+      "post": {
+        "tags": [
+          "load document"
+        ],
+        "summary": "Upload Image",
+        "operationId": "upload_image_v1_uploadImage_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/uploadImageBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/tools/create_newsletter": {
       "get": {
         "tags": [
@@ -366,25 +405,6 @@
                 "schema": {
                   "$ref": "#/components/schemas/HTTPValidationError"
                 }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/v1/tools/test": {
-      "get": {
-        "tags": [
-          "newsletter"
-        ],
-        "summary": "Newsletter Route",
-        "operationId": "newsletter_route_v1_tools_test_get",
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {}
               }
             }
           }
@@ -557,6 +577,81 @@
                 "schema": {
                   "$ref": "#/components/schemas/HTTPValidationError"
                 }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/invoice/": {
+      "get": {
+        "tags": [
+          "invoice"
+        ],
+        "summary": "Getinvoices",
+        "operationId": "getinvoices_v1_invoice__get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "invoice"
+        ],
+        "summary": "Post Invoice Route",
+        "operationId": "post_invoice_route_v1_invoice__post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InvoiceBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/public/": {
+      "get": {
+        "tags": [
+          "public"
+        ],
+        "summary": "List Files",
+        "operationId": "list_files_v1_public__get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
               }
             }
           }
@@ -777,6 +872,62 @@
             "user_id": "741f03fc-22bc-45f6-b9ba-4a3064893b64"
           }
         ]
+      },
+      "InvoiceBody": {
+        "properties": {
+          "NoFacture": {
+            "type": "string",
+            "title": "Nofacture",
+            "description": "Invoice number"
+          },
+          "Date": {
+            "type": "string",
+            "title": "Date",
+            "description": "Formatted Date of the invoice release. Date should be formatted as DD/MM/YYYY"
+          },
+          "Description": {
+            "type": "string",
+            "title": "Description",
+            "description": "Description of the invoice"
+          },
+          "TotalHT": {
+            "type": "string",
+            "title": "Totalht",
+            "description": "Total amount excluding tax"
+          },
+          "TVA": {
+            "type": "string",
+            "title": "Tva",
+            "description": "Total amount of taxes"
+          },
+          "TotalTTC": {
+            "type": "string",
+            "title": "Totalttc",
+            "description": "Total amount including all taxes"
+          },
+          "Monnaie": {
+            "type": "string",
+            "title": "Monnaie",
+            "description": "The currency used. Should be only EUR or DOLLAR"
+          },
+          "Vendeur": {
+            "type": "string",
+            "title": "Vendeur",
+            "description": "Name of the vendor"
+          }
+        },
+        "type": "object",
+        "required": [
+          "NoFacture",
+          "Date",
+          "Description",
+          "TotalHT",
+          "TVA",
+          "TotalTTC",
+          "Monnaie",
+          "Vendeur"
+        ],
+        "title": "InvoiceBody"
       },
       "NewsLetterRequest": {
         "properties": {
@@ -1159,6 +1310,20 @@
           "type"
         ],
         "title": "ValidationError"
+      },
+      "uploadImageBody": {
+        "properties": {
+          "data_url": {
+            "type": "string",
+            "title": "Data Url",
+            "description": "The data URL of the image"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data_url"
+        ],
+        "title": "uploadImageBody"
       }
     },
     "securitySchemes": {

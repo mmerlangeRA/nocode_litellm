@@ -5,6 +5,7 @@ import os
 from fastapi import Depends, FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from injector import Injector
+from server.database.client import SupabaseClient
 
 from server.routes.health.health_router import health_router
 from server.routes.completion.completion_router import completions_router
@@ -15,19 +16,27 @@ from server.routes.load_document.load_document_router import load_document_route
 from server.routes.tools.newsletter_route import newsletter_router 
 from server.routes.rag.rag_router import rag_router 
 from server.routes.ppt.ppt_router import ppt_router 
+from server.routes.invoice.invoice_router import invoice_router
+from server.routes.files.public_files_router import public_files_router
 from settings.settings import Settings
 from fastapi.staticfiles import StaticFiles
+from contextlib import asynccontextmanager
 
 logger = logging.getLogger(__name__)
 
-
 def create_app(root_injector: Injector) -> FastAPI:
-
+    
+    @asynccontextmanager
+    async def lifespan(app: FastAPI):
+        supabase_client = root_injector.get(SupabaseClient)
+        yield
+        await supabase_client.close()
+    
     # Start the API
     async def bind_injector_to_request(request: Request) -> None:
         request.state.injector = root_injector
 
-    app = FastAPI(dependencies=[Depends(bind_injector_to_request)])
+    app = FastAPI(lifespan = lifespan,dependencies=[Depends(bind_injector_to_request)])
 
     if not os.path.exists("static"): 
         os.makedirs("static")
@@ -42,12 +51,13 @@ def create_app(root_injector: Injector) -> FastAPI:
     app.include_router(newsletter_router)
     app.include_router(rag_router)
     app.include_router(ppt_router)
-
+    app.include_router(invoice_router)
+    app.include_router(public_files_router)
+    
     settings = root_injector.get(Settings)
 
     os.environ["LANGCHAIN_API_KEY"] = settings.langsmith.api_key 
     os.environ["LANGCHAIN_TRACING_V2"] = str(settings.langsmith.enabled).lower() 
-
 
     if settings.server.cors.enabled:
         logger.debug("Setting up CORS middleware")

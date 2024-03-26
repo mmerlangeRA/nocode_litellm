@@ -5,7 +5,7 @@ from chromadb.config import Settings
 from chromadb.utils import embedding_functions
 from settings.settings import settings
 from server.tools.get_document_from_url import get_Documents_from_url
-from server.database.client import add_row_to_table,supabase_client,add_rows_to_table
+from server.database.client import add_row_to_table,add_rows_to_table
 import tiktoken
 import chromadb
 import requests

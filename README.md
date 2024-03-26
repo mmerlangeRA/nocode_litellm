@@ -29,3 +29,14 @@ Routes call services. A route should call one service.
 * A service :
   * has an id a description and watches consumptions
   * uses tools to perform its tasks
+
+
+## Todo
+* chromadb in production ?
+* RAG
+
+
+docker build -t nocode_litellm:latest .
+docker run -d -p 8001:8001 nocode_litellm:latest
+
+
