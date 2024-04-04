@@ -1,0 +1,82 @@
+import os
+from typing import List
+import uuid
+from langchain_community.document_loaders import WebBaseLoader, PyPDFLoader,Docx2txtLoader,UnstructuredPowerPointLoader
+from server.utils.file_extension import get_file_extension
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+from langchain_core.documents.base import Document
+import requests
+
+
+async def get_file_extension_from_url(url:str)->str:
+    print("url",url)
+    response = requests.head(url, allow_redirects=True)
+
+    print("response", response.text )
+    print("Status Code:", response.status_code)
+    print("Headers:", response.headers)
+    if response.status_code != 200:
+        print("Error:", response.status_code)
+        print("Error details:", response.text)
+
+    content_type = response.headers.get('Content-Type')
+    print("content_type",content_type)
+    # Map common MIME types to file extensions
+    # This is a basic mapping; you may need to expand it based on your needs
+    mime_type_to_extension = {
+        'application/pdf': '.pdf',
+        'image/jpeg': '.jpg',
+        'image/png': '.png',
+        'text/html': '.html',
+        'text/plain': '.txt',
+        'application/zip': '.zip',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document': '.docx',
+        'application/vnd.openxmlformats-officedocument.presentationml.presentation': '.pptx'
+        # Add more mappings as needed
+    }
+    
+    # Get the file extension based on the Content-Type
+    return mime_type_to_extension.get(content_type, 'Unknown')
+
+def download_doc(url:str, local_filename:str)->str:
+    with requests.get(url, stream=True) as r:
+        r.raise_for_status()  # This will raise an exception for HTTP errors.
+        with open(local_filename, 'wb') as f:
+            for chunk in r.iter_content(chunk_size=8192):
+                f.write(chunk)
+    return local_filename
+
+async def get_Documents_from_url(url:str,file_name:str,chunk_size=1000,chunk_overlap=50)->List[Document]:
+    file_extension =  get_file_extension(file_name)
+    extension_to_loader = {
+        'pdf':PyPDFLoader,
+        'docx': Docx2txtLoader,
+        'pptx': UnstructuredPowerPointLoader,
+        'html': WebBaseLoader
+    }
+
+    current_working_directory = os.getcwd()
+    tmp_directory = os.path.join(current_working_directory, "tmp")
+    isExist = os.path.exists(tmp_directory)
+    if not isExist:
+        os.makedirs(tmp_directory)
+    tmp_file_name= str(uuid.uuid1())+ "_"+file_name
+    tmp_file_path = os.path.join(tmp_directory, tmp_file_name)
+    url_to_use= download_doc(url, tmp_file_path)
+
+    loader = extension_to_loader.get(file_extension,WebBaseLoader)(url_to_use)
+    
+    print(loader)
+    documents = loader.load()
+    text_splitter = RecursiveCharacterTextSplitter(
+        chunk_size=chunk_size,
+        chunk_overlap=chunk_overlap,
+        length_function=len,
+        is_separator_regex=False,
+    )
+    docs = text_splitter.split_documents(documents)
+    if os.path.exists(tmp_file_path):
+        os.remove(tmp_file_path) 
+    print("nb docs", len(docs))
+    return docs
+

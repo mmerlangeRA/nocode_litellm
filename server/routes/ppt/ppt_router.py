@@ -4,7 +4,7 @@ import os
 from typing import List, Literal
 from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import BaseModel, Field
-from components.rag.ingest import ingest_document, ingest_document_return_chunks
+from components.rag.ingest import ingest_document
 from components.rag.query import query_documents
 from components.ppt.generator import create_presentation
 from server.utils.errors import INTERNAL_SERVER_ERROR_HTTPEXCEPTION

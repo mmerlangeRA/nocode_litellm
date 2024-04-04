@@ -6,7 +6,20 @@ from collections.abc import Iterable
 from pathlib import Path
 from typing import Any
 
-from pydantic.utils import deep_update, unique_list
+def deep_update(source, overrides):
+    for key, value in overrides.items():
+        if isinstance(value, dict) and value:
+            returned = deep_update(source.get(key, {}), value)
+            source[key] = returned
+        else:
+            source[key] = overrides[key]
+    return source
+
+
+def unique_list(seq):
+    seen = set()
+    return [x for x in seq if x not in seen and not seen.add(x)]
+
 
 from server.constants import PROJECT_ROOT_PATH
 from settings.yaml import load_yaml_with_envvars

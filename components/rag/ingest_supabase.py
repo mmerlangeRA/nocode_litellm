@@ -1,54 +1,40 @@
-import uuid
-import chromadb
-from langchain_community.vectorstores import Chroma
+from langchain_community.vectorstores import SupabaseVectorStore
 from langchain_openai import OpenAIEmbeddings
 
+from server.database.client import SupabaseClient, add_row_to_table, connect_to_supabase
 from settings.settings import settings
 from components.rag.get_document_from_url import get_Documents_from_url
 import tiktoken
+from typing import List
+from supabase.client import Client, create_client
+from server.di import global_injector
 
 
-persist_directory="./"+settings().chroma.directory
-collection_name=settings().chroma.collection_name
-persistent_client = chromadb.PersistentClient(path=persist_directory)
-collection = persistent_client.get_or_create_collection(collection_name)
+supabase: Client = global_injector.get(SupabaseClient).client
+print(supabase)
+embeddings = OpenAIEmbeddings()
 
-embedding_function = OpenAIEmbeddings()
-
-langchain_chroma = Chroma(
-    client=persistent_client,
-    collection_name=collection_name,
-    embedding_function=embedding_function,
+vector_store = SupabaseVectorStore(
+    embedding=embeddings,
+    client=connect_to_supabase(),
+    table_name="documents",
+    query_name="match_documents",
 )
-
-def delete_collection(collection_name:str)->bool:
-    persistent_client.delete_collection(collection_name)
-    persistent_client.close()
-    print("collection deleted")
-    return True
 
 async def ingest_document(url:str, file_id:str, file_name:str,embeddingsProvider:str,user_id:str):
     print("ingest_document "+file_name)
     encoding = tiktoken.encoding_for_model("gpt-3.5-turbo")
     docs = await get_Documents_from_url(url,file_name)
-    print(docs)
-    ids=[]
     #print("docs generated",len(docs))
     for d in docs:
         d.metadata["file_id"] = file_id
         d.metadata["user_id"] = user_id
-        id = str(uuid.uuid1())
-        ids.append(id)
-        d.metadata["id"] = id
-        d.metadata["source"] = ""
-    print(docs)
-    print(ids)
-    langchain_chroma.add_texts(
+        d.metadata["source"]=""
+
+    vector_store.add_texts(
         texts=[d.page_content for d in docs],
         metadatas=[d.metadata for d in docs],
-        ids=ids
     ) 
-    print("There are", langchain_chroma._collection.count(), "in the collection")
    
 
 class FileItem:

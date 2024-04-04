@@ -98,6 +98,10 @@ class LangsmithSettings(BaseModel):
 class DeeplSettings(BaseModel):
     api_key: str
 
+class ChromaSettings(BaseModel):
+    directory:str
+    collection_name:str
+
 class Settings(BaseModel):
     server: ServerSettings
     data: DataSettings
@@ -106,6 +110,7 @@ class Settings(BaseModel):
     token: Token
     supabase: SupaBaseSettrings
     langsmith:LangsmithSettings
+    chroma:ChromaSettings
 
 
 

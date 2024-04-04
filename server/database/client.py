@@ -1,13 +1,13 @@
 import io
 import json
 from typing import List
-from supabase import create_client, Client
+
 import uuid
 
+from settings.settings import settings
 from server.utils.errors import INTERNAL_SERVER_ERROR_HTTPEXCEPTION
 import logging
-from datetime import datetime, timezone
-import base64
+from supabase.client import Client, create_client
 from httpx import AsyncClient
 
 logger = logging.getLogger(__name__)
@@ -15,22 +15,17 @@ logger = logging.getLogger(__name__)
 
 class SupabaseClient:
     def __init__(self,SUPABASE_URL,SUPABASE_KEY):
-        self.url = SUPABASE_URL
-        self.headers = {
-            "apikey": SUPABASE_KEY,
-            "Authorization": f"Bearer {SUPABASE_KEY}",
-            "Content-Type": "application/json",
-        }
-        self.client = AsyncClient(base_url=self.url, headers=self.headers)
+        self.client:Client = get_supabase_client(SUPABASE_URL, SUPABASE_KEY)
     
     async def close(self):
-        await self.client.aclose()
+        await self.client.auth.sign_out()
 
-def get_supabase_client():
-    return SupabaseClient()
+def get_supabase_client(SUPABASE_URL,SUPABASE_KEY)->Client:
+    print("supabase created")
+    return create_client(SUPABASE_URL, SUPABASE_KEY)
 
 
-'''
+
 def connect_to_supabase() -> Client:
     try:
         database_settings = settings().supabase
@@ -42,7 +37,7 @@ def connect_to_supabase() -> Client:
         raise INTERNAL_SERVER_ERROR_HTTPEXCEPTION("Could not connect with database")
     return supabase
 
-
+'''
 supabase_client = connect_to_supabase()
 
 

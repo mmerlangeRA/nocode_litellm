@@ -9,7 +9,6 @@ from tools.scraping.list_urls import list_all_article_urls_from_json_instruction
 from tools.summarize import summarize_articles_from_urls_returns_sorted_by_rank
 from tools.scraping.scrapper import BSQueryExecutor, QueryModel
 from server.utils.file_extension import get_file_extension
-from server.tools import get_document_from_url
 from server.utils.errors import FORBIDDEN_HTTPEXCEPTION, INTERNAL_SERVER_ERROR_HTTPEXCEPTION
 from server.utils.tokens import UserRights, generate_token, verify_token
 

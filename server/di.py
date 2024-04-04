@@ -1,5 +1,5 @@
 from injector import Injector, SingletonScope
-from server.database.client import SupabaseClient
+from server.database.client import SupabaseClient, get_supabase_client
 from settings.settings import Settings, unsafe_typed_settings
 
 def create_application_injector() -> Injector:
