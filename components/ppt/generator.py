@@ -12,19 +12,36 @@ logger = logging.getLogger(__name__)
 TITLE_FONT_SIZE = Pt(30)
 SLIDE_FONT_SIZE = Pt(16)
 
+current_directory = os.getcwd()+"/components/ppt"
+
+template_path = os.path.join(current_directory, "template.pptx")
+print(template_path)
+
 base_url = settings().server.base_url
 async def create_presentation(topic:str, slide_titles:List[str], slide_contents:List[str])->str:
     try:
-        prs = pptx.Presentation()
-        slide_layout = prs.slide_layouts[1]
-
-        title_slide = prs.slides.add_slide(prs.slide_layouts[0])
+        prs = pptx.Presentation(template_path)
+        for index, layout in enumerate(prs.slide_layouts):
+            print(f"Layout {index}: {layout.name}")
+            # If you want to print more details about each layout, you can do so here
+            # For example, printing the number of placeholders:
+            print(f" - Number of placeholders: {len(layout.placeholders)}")
+        slide_layout = prs.slide_layouts[22]
+        title_slide_layout = prs.slide_layouts[5]
+        print(prs.slide_layouts)
+        print(slide_layout)
+        title_slide = prs.slides.add_slide(title_slide_layout)
+        print(title_slide.shapes)
         title_slide.shapes.title.text = topic
 
         for slide_title, slide_content in zip(slide_titles, slide_contents):
             slide = prs.slides.add_slide(slide_layout)
             slide.shapes.title.text = slide_title
-            slide.shapes.placeholders[1].text = slide_content
+            print(slide.shapes.placeholders)
+            print(len(slide.shapes.placeholders))
+            for shape in slide.placeholders:
+                print('%d %s' % (shape.placeholder_format.idx, shape.name))
+            slide.shapes.placeholders[2].text = slide_content
 
             # Customize font size for titles and content
             slide.shapes.title.text_frame.paragraphs[0].font.size = TITLE_FONT_SIZE
