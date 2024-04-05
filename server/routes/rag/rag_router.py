@@ -33,7 +33,8 @@ class FileItemsRequest(IngestRequest):
 
 class QueryRequest(BaseModel):
     query:str  = Field(description="the information to be looked for")
-    source_count:int = Field(default=8)
+    source_count:int = Field(default=20)
+    min_confidence: float = Field(default=0.2)
     file_ids:list = Field(default=[],description="the ids of the files to be queried")
     class Config:
             schema_extra = {
@@ -62,8 +63,7 @@ async def ingest_route(request:Request,queryRequest: IngestRequest, current_user
 @rag_router.post("/query", tags=["rag"])
 async def query_route(request:Request, queryRequest: QueryRequest, current_user: dict = Depends(verify_token)) :
     try:
-         mostSimilarChunks = await query_documents(queryRequest.query,queryRequest.source_count, queryRequest.file_ids)
-         print(mostSimilarChunks)
+         mostSimilarChunks = await query_documents(queryRequest.query,queryRequest.source_count,queryRequest.min_confidence, queryRequest.file_ids)
          return {"results":mostSimilarChunks}
     except Exception as e:
          logger.error(e)

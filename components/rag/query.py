@@ -25,17 +25,18 @@ langchain_chroma = Chroma(
     embedding_function=embedding_function,
 )
 #needs more filtering
-async def query_documents(query:str,source_count:int = 8, file_ids:List[str]=[]):
+async def query_documents(query:str,source_count:int = 8, min_confidence = 0.2, file_ids:List[str]=[]):
+    print(f'query: {query}')
     if file_ids and len(file_ids)>0:
-        #print("query_documents chromadb")
         filter = {"file_id": {"$in": file_ids}}
-        #print(filter)
-        results = langchain_chroma.similarity_search(query, source_count, filter=filter)
+        results = langchain_chroma.similarity_search_with_score(query, source_count, filter=filter)
     else :
-        results =  langchain_chroma.similarity_search(query, source_count)
+        results =  langchain_chroma.similarity_search_with_score(query, source_count)
     print(results)
 
-    return results
+    filtered_docs = [doc for doc, score in results if score > min_confidence]
+    print(f'returning {len(filtered_docs)} chunks')
+    return filtered_docs
 
 def get_chunk_by_id(id:str):
     print("get_chunk_by_id ",id)
