@@ -25,7 +25,7 @@ langchain_chroma = Chroma(
     embedding_function=embedding_function,
 )
 #needs more filtering
-async def query_documents(query:str,source_count:int = 3, file_ids:List[str]=[]):
+async def query_documents(query:str,source_count:int = 8, file_ids:List[str]=[]):
     if file_ids and len(file_ids)>0:
         #print("query_documents chromadb")
         filter = {"file_id": {"$in": file_ids}}

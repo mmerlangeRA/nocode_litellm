@@ -500,13 +500,53 @@
         ]
       }
     },
-    "/v1/rag/delete": {
+    "/v1/rag/get_chunk/{chunk_id}": {
+      "get": {
+        "tags": [
+          "rag"
+        ],
+        "summary": "Get Chunk",
+        "operationId": "get_chunk_v1_rag_get_chunk__chunk_id__get",
+        "parameters": [
+          {
+            "name": "chunk_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Chunk Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/rag/delete_collection": {
       "post": {
         "tags": [
           "rag"
         ],
         "summary": "Delete Route",
-        "operationId": "delete_route_v1_rag_delete_post",
+        "operationId": "delete_route_v1_rag_delete_collection_post",
         "security": [
           {
             "HTTPBearer": []
@@ -545,21 +585,26 @@
         }
       }
     },
-    "/v1/rag/get_chunk/{chunk_id}": {
-      "get": {
+    "/v1/rag/delete_chunks_by_file_id/{file_id}": {
+      "post": {
         "tags": [
           "rag"
         ],
-        "summary": "Get Chunk",
-        "operationId": "get_chunk_v1_rag_get_chunk__chunk_id__get",
+        "summary": "Delete Chunk",
+        "operationId": "delete_chunk_v1_rag_delete_chunks_by_file_id__file_id__post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
         "parameters": [
           {
-            "name": "chunk_id",
+            "name": "file_id",
             "in": "path",
             "required": true,
             "schema": {
               "type": "string",
-              "title": "Chunk Id"
+              "title": "File Id"
             }
           }
         ],

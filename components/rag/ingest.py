@@ -27,6 +27,22 @@ def delete_collection(collection_name:str)->bool:
     print("collection deleted")
     return True
 
+def delete_chunks_by_file_id(file_id:str):
+    print("in delete_chunks_by_file_id")
+    ids_to_delete=[]
+    query_where = {"file_id": file_id}
+    docs = collection.get( where=query_where)
+    print(docs)
+
+    ids_to_delete = docs.get("ids") or []
+    print(ids_to_delete)
+    if(len(ids_to_delete)==0):
+        return True
+    
+    collection.delete(ids=ids_to_delete)
+    print("chunks deleted")
+    return True
+
 async def ingest_document(url:str, file_id:str, file_name:str,embeddingsProvider:str,user_id:str):
     print("ingest_document "+file_name)
     encoding = tiktoken.encoding_for_model("gpt-3.5-turbo")

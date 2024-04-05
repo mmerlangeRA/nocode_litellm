@@ -4,7 +4,7 @@ import os
 from typing import Literal
 from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import BaseModel, Field
-from components.rag.ingest import delete_collection, ingest_document
+from components.rag.ingest import delete_chunks_by_file_id, delete_collection, ingest_document
 from components.rag.query import get_chunk_by_id, query_documents
 from server.utils.errors import INTERNAL_SERVER_ERROR_HTTPEXCEPTION
 from server.utils.tokens import verify_token
@@ -33,13 +33,13 @@ class FileItemsRequest(IngestRequest):
 
 class QueryRequest(BaseModel):
     query:str  = Field(description="the information to be looked for")
-    source_count:int = Field(default=5)
+    source_count:int = Field(default=8)
     file_ids:list = Field(default=[],description="the ids of the files to be queried")
     class Config:
             schema_extra = {
                 "examples": [{
                     "query": 'What is the racket Djokovic uses ?',
-                    "source_count":5,
+                    "source_count":8,
                 }]
             }
 
@@ -68,14 +68,6 @@ async def query_route(request:Request, queryRequest: QueryRequest, current_user:
     except Exception as e:
          logger.error(e)
          raise INTERNAL_SERVER_ERROR_HTTPEXCEPTION(e)
-
-@rag_router.post("/delete", tags=["rag"])
-async def delete_route(request:Request, collection_name: str, current_user: dict = Depends(verify_token)) :
-    try:
-         return delete_collection(collection_name)
-    except Exception as e:
-         logger.error(e)
-         raise INTERNAL_SERVER_ERROR_HTTPEXCEPTION(e)
     
 
 @rag_router.get("/get_chunk/{chunk_id}", tags=["rag"])
@@ -89,3 +81,20 @@ async def get_chunk(chunk_id: str,request:Request) :
          logger.error(e)
          raise INTERNAL_SERVER_ERROR_HTTPEXCEPTION(e)
 
+
+@rag_router.post("/delete_collection", tags=["rag"])
+async def delete_route(request:Request, collection_name: str, current_user: dict = Depends(verify_token)) :
+    try:
+         return delete_collection(collection_name)
+    except Exception as e:
+         logger.error(e)
+         raise INTERNAL_SERVER_ERROR_HTTPEXCEPTION(e)
+
+@rag_router.post("/delete_chunks_by_file_id/{file_id}", tags=["rag"])
+async def delete_chunk(file_id: str, request:Request, current_user: dict = Depends(verify_token)) :
+    try:
+         print("delete_chunks_by_file_id ",file_id)
+         return delete_chunks_by_file_id(file_id)
+    except Exception as e:
+         logger.error(e)
+         raise INTERNAL_SERVER_ERROR_HTTPEXCEPTION(e)
