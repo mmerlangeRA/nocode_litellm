@@ -3,9 +3,21 @@ import chromadb
 from langchain_community.vectorstores import Chroma
 from langchain_openai import OpenAIEmbeddings
 from settings.settings import settings
-from typing import List
+from typing import Dict, List, NamedTuple
 from langchain.retrievers import ContextualCompressionRetriever
 from langchain.retrievers.document_compressors import LLMChainExtractor
+from langchain_core.documents.base import Document
+
+def transform_documents_to_json(documents: List[Document]) -> List[Dict[str, any]]:
+    return [
+        {
+            "content": doc.page_content,
+            "user_id": doc.metadata['user_id'],
+            "file_id": doc.metadata['file_id'],
+            "page": doc.metadata.get('page', -1),
+            "id":doc.metadata.get('id', -1)
+        } for doc in documents
+    ]
 
 
 """ llm = OpenAI(temperature=0)
@@ -32,11 +44,13 @@ async def query_documents(query:str,source_count:int = 8, min_confidence = 0.2, 
         results = langchain_chroma.similarity_search_with_score(query, source_count, filter=filter)
     else :
         results =  langchain_chroma.similarity_search_with_score(query, source_count)
-    print(results)
+    #print(results)
 
     filtered_docs = [doc for doc, score in results if score > min_confidence]
     print(f'returning {len(filtered_docs)} chunks')
-    return filtered_docs
+    #print(filtered_docs)
+    #print(transform_documents_to_json(filtered_docs))
+    return transform_documents_to_json(filtered_docs)
 
 def get_chunk_by_id(id:str):
     print("get_chunk_by_id ",id)

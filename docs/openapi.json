@@ -253,47 +253,24 @@
         }
       }
     },
-    "/v1/load": {
-      "post": {
+    "/v1/files/get_file/{file_id}": {
+      "get": {
         "tags": [
           "load document"
         ],
-        "summary": "Load Doc Route",
-        "operationId": "load_doc_route_v1_load_post",
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            }
-          }
-        },
-        "security": [
+        "summary": "Get File",
+        "operationId": "get_file_v1_files_get_file__file_id__get",
+        "parameters": [
           {
-            "HTTPBearer": []
-          }
-        ]
-      }
-    },
-    "/v1/uploadImage": {
-      "post": {
-        "tags": [
-          "load document"
-        ],
-        "summary": "Upload Image",
-        "operationId": "upload_image_v1_uploadImage_post",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/uploadImageBody"
-              }
+            "name": "file_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "File Id"
             }
-          },
-          "required": true
-        },
+          }
+        ],
         "responses": {
           "200": {
             "description": "Successful Response",
@@ -1207,7 +1184,12 @@
           "source_count": {
             "type": "integer",
             "title": "Source Count",
-            "default": 5
+            "default": 20
+          },
+          "min_confidence": {
+            "type": "number",
+            "title": "Min Confidence",
+            "default": 0.2
           },
           "file_ids": {
             "items": {},
@@ -1317,20 +1299,6 @@
           "type"
         ],
         "title": "ValidationError"
-      },
-      "uploadImageBody": {
-        "properties": {
-          "data_url": {
-            "type": "string",
-            "title": "Data Url",
-            "description": "The data URL of the image"
-          }
-        },
-        "type": "object",
-        "required": [
-          "data_url"
-        ],
-        "title": "uploadImageBody"
       }
     },
     "securitySchemes": {
