@@ -64,7 +64,7 @@ async def ingest_route(request:Request,queryRequest: IngestRequest, current_user
 async def query_route(request:Request, queryRequest: QueryRequest, current_user: dict = Depends(verify_token)) :
     try:
          mostSimilarChunks = await query_documents(queryRequest.query,queryRequest.source_count,queryRequest.min_confidence, queryRequest.file_ids)
-         return {"results":mostSimilarChunks}
+         return mostSimilarChunks
     except Exception as e:
          logger.error(e)
          raise INTERNAL_SERVER_ERROR_HTTPEXCEPTION(e)

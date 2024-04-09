@@ -1,4 +1,4 @@
-from nocode_litellm.server.database.client import add_row_to_table
+from server.database.client import add_row_to_table
 
 
 workspace_file_table_name = "file_workspaces"

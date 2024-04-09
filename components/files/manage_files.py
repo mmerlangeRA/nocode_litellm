@@ -5,18 +5,13 @@ from fastapi import HTTPException, UploadFile
 from pydantic import BaseModel
 from  components.workspaces.manage_workspaces import createFileWorkspace
 from server.utils.errors import INTERNAL_SERVER_ERROR_HTTPEXCEPTION, PAYLOAD_TOO_LARGE_HTTPEXCEPTION
-from server.database.client import add_row_to_table,supabase_client,get_row_from_table
-
-class createFileRequet(BaseModel):
-  name: str
-  file: FileExistsError
-  workspace_id: str
-  embeddingsProvider: str 
+from server.database.client import add_row_to_table,get_supabase_client
 
 from sqlalchemy import create_engine, Column, String, Integer, DateTime, ForeignKey, Boolean
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship
 from datetime import datetime
+from settings.settings import settings
 
 Base = declarative_base()
 
@@ -48,7 +43,7 @@ async def upload_file(file: UploadFile,payload: dict):
         raise PAYLOAD_TOO_LARGE_HTTPEXCEPTION(detail=f"File must be less than {SIZE_LIMIT / 1000000}MB")
     
     # Upload file to Supabase
-    response = supabase_client.storage.from_("files").upload(storage_path, content)
+    response = get_supabase_client().storage.from_("files").upload(storage_path, content)
     if 'error' in response and response['error']:
         raise INTERNAL_SERVER_ERROR_HTTPEXCEPTION(detail="Error uploading file to Supabase")
 
@@ -72,6 +67,16 @@ async def create_file(file: UploadFile, fileRecord:FileCreationRequest, workspac
     #fetchedFile = await getFileById(createdFile.id)
 
     return createdFile
+
+
+def getFileByUrl(file_id:str):
+    print("getFileByUrl",file_id)
+    supabase_url = settings().supabase.url
+    supabase_key =settings().supabase.anon_key
+    print(supabase_url, supabase_key)
+    res= get_supabase_client(supabase_url,supabase_key).storage.from_('files').create_signed_url(file_id,60 * 60 * 24)
+    print(res)
+    return res
 
 
 

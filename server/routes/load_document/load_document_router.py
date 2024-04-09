@@ -6,13 +6,15 @@ from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 from components.rag.get_document_from_url import get_Documents_from_url
+from components.files.manage_files import getFileByUrl
 from server.utils.errors import FORBIDDEN_HTTPEXCEPTION
 from server.utils.tokens import UserRights, generate_token, verify_token
 from settings.settings import settings
 
 
-load_document_router = APIRouter(prefix="/v1")
+load_document_router = APIRouter(prefix="/v1/files")
 
+'''
 def safe_base64_decode(data_str: str):
     padding_needed = len(data_str) % 4
     if padding_needed:  # Add necessary padding
@@ -55,3 +57,8 @@ async def upload_image(request:Request,imageBody: uploadImageBody):
         raise HTTPException(status_code=500, detail=f"Error saving image: {e}")
 
     return JSONResponse(status_code=200, content={"message": "Image uploaded successfully", "filename": filename})
+'''
+@load_document_router.get("/get_file/{user_id}/{file_id}", tags=["load document"])
+async def get_file(user_id:str,file_id:str, request:Request):
+    print("get_file "+user_id+"/"+file_id)
+    return getFileByUrl(user_id+"/"+file_id)
