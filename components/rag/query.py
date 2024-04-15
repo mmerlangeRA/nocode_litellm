@@ -2,6 +2,7 @@ import json
 import chromadb
 from langchain_community.vectorstores import Chroma
 from langchain_openai import OpenAIEmbeddings
+from server.utils.errors import NOT_FOUND_HTTPEXCEPTION
 from settings.settings import settings
 from typing import Dict, List, NamedTuple
 from langchain.retrievers import ContextualCompressionRetriever
@@ -53,8 +54,15 @@ async def query_documents(query:str,source_count:int = 8, min_confidence = 0.2, 
     return transform_documents_to_json(filtered_docs)
 
 def get_chunk_by_id(id:str):
-    print("get_chunk_by_id ",id)
-    return collection.get(ids=[id])
+    chunks = collection.get(ids=[id])
+    if len(chunks) == 0:
+        raise NOT_FOUND_HTTPEXCEPTION(f"No chunk found with id {id}")
+    id =  chunks.get("ids")[0]
+    metadatas =  chunks.get("metadatas")[0]
+    file_id =  metadatas.get("file_id")
+    page =  metadatas.get("page",-1)
+    content= chunks.get("documents")[0]
+    return {"id":id,"file_id":file_id,"page":page,"content":content}
 
 def get_all_chunks():
     print("get_all_chunks ")

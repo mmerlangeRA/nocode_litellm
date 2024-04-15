@@ -48,16 +48,17 @@ class QueryRequest(BaseModel):
 rag_router = APIRouter(prefix="/v1/rag")
 
 @rag_router.post("/ingest", tags=["rag"])
-async def ingest_route(request:Request,queryRequest: IngestRequest, current_user: dict = Depends(verify_token)) :
-    '''Use this api to get information from reference database'''
-    try:
-         print("ingest_route")
-         print(queryRequest)
-         await ingest_document(queryRequest.file_url, queryRequest.file_id, queryRequest.file_name, queryRequest.embeddingsProvider,queryRequest.user_id)
-         return {"response":"ingested"}
-    except Exception as e:
-         logger.error(e)
-         raise INTERNAL_SERVER_ERROR_HTTPEXCEPTION(e)
+async def ingest_route(request:Request,ingestRequest: IngestRequest, current_user: dict = Depends(verify_token)) :
+     '''Use this api to get information from reference database'''
+     try:
+          print("ingest_route")
+          print()
+          await ingest_document(ingestRequest.file_url, ingestRequest.file_id, ingestRequest.file_name, ingestRequest.embeddingsProvider,ingestRequest.user_id)
+          return {"response":"ingested"}
+     except Exception as e:
+          print(e)
+          raise e
+
     
 
 @rag_router.post("/query", tags=["rag"])

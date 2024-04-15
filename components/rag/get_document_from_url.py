@@ -2,6 +2,7 @@ import os
 from typing import List
 import uuid
 from langchain_community.document_loaders import WebBaseLoader, PyPDFLoader,Docx2txtLoader,UnstructuredPowerPointLoader
+from server.utils.errors import BAD_REQUEST_HTTPEXCEPTION, INTERNAL_SERVER_ERROR_HTTPEXCEPTION
 from server.utils.file_extension import get_file_extension
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_core.documents.base import Document
@@ -47,36 +48,42 @@ def download_doc(url:str, local_filename:str)->str:
     return local_filename
 
 async def get_Documents_from_url(url:str,file_name:str,chunk_size=1000,chunk_overlap=50)->List[Document]:
-    file_extension =  get_file_extension(file_name)
-    extension_to_loader = {
-        'pdf':PyPDFLoader,
-        'docx': Docx2txtLoader,
-        'pptx': UnstructuredPowerPointLoader,
-        'html': WebBaseLoader
-    }
+    try:
+        file_extension =  get_file_extension(file_name)
+        extension_to_loader = {
+            'pdf':PyPDFLoader,
+            'docx': Docx2txtLoader,
+            'pptx': UnstructuredPowerPointLoader,
+            'html': WebBaseLoader
+        }
 
-    current_working_directory = os.getcwd()
-    tmp_directory = os.path.join(current_working_directory, "tmp")
-    isExist = os.path.exists(tmp_directory)
-    if not isExist:
-        os.makedirs(tmp_directory)
-    tmp_file_name= str(uuid.uuid1())+ "_"+file_name
-    tmp_file_path = os.path.join(tmp_directory, tmp_file_name)
-    url_to_use= download_doc(url, tmp_file_path)
+        current_working_directory = os.getcwd()
+        tmp_directory = os.path.join(current_working_directory, "tmp")
+        isExist = os.path.exists(tmp_directory)
+        if not isExist:
+            os.makedirs(tmp_directory)
+        tmp_file_name= str(uuid.uuid1())+ "_"+file_name
+        tmp_file_path = os.path.join(tmp_directory, tmp_file_name)
+        url_to_use= download_doc(url, tmp_file_path)
 
-    loader = extension_to_loader.get(file_extension,WebBaseLoader)(url_to_use)
-    
-    print(loader)
-    documents = loader.load()
-    text_splitter = RecursiveCharacterTextSplitter(
-        chunk_size=chunk_size,
-        chunk_overlap=chunk_overlap,
-        length_function=len,
-        is_separator_regex=False,
-    )
-    docs = text_splitter.split_documents(documents)
-    if os.path.exists(tmp_file_path):
-        os.remove(tmp_file_path) 
-    print("nb docs", len(docs))
-    return docs
-
+        loader_function = extension_to_loader.get(file_extension)
+        
+        print(loader_function)
+        if loader_function is None:
+            raise BAD_REQUEST_HTTPEXCEPTION("Unsupported extention")
+        loader = loader_function(url_to_use)
+        documents = loader.load()
+        text_splitter = RecursiveCharacterTextSplitter(
+            chunk_size=chunk_size,
+            chunk_overlap=chunk_overlap,
+            length_function=len,
+            is_separator_regex=False,
+        )
+        docs = text_splitter.split_documents(documents)
+        if os.path.exists(tmp_file_path):
+            os.remove(tmp_file_path) 
+        print("nb docs", len(docs))
+        return docs
+    except Exception as e:
+        print(e)
+        raise INTERNAL_SERVER_ERROR_HTTPEXCEPTION(e)
