@@ -79,5 +79,25 @@ def getFileByUrl(file_id:str):
     return res
 
 
+def fetch_row_by_id(table_name, row_id):
+    """
+    Fetch a row from a specified table in Supabase by ID.
+
+    :param supabase_client: Initialized Supabase client
+    :param table_name: Name of the table to query (str)
+    :param row_id: ID of the row to fetch (int or str)
+    :return: Row data as a dictionary or None if not found
+    """
+    print(f'fetch_row_by_id {table_name} with id={row_id}')
+    supabase_url = settings().supabase.url
+    supabase_key =settings().supabase.anon_key
+    data = get_supabase_client(supabase_url,supabase_key).table(table_name).select("*").eq('id', row_id).execute()
+    print("DATA below")
+    results = data.data
+    if results:
+        return results[0]  # Return the first row if available
+    else:
+        print("No data found for the given ID.")
+        return None
 
 

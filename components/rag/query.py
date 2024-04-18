@@ -2,6 +2,7 @@ import json
 import chromadb
 from langchain_community.vectorstores import Chroma
 from langchain_openai import OpenAIEmbeddings
+from components.files.manage_files import fetch_row_by_id
 from server.utils.errors import NOT_FOUND_HTTPEXCEPTION
 from settings.settings import settings
 from typing import Dict, List, NamedTuple
@@ -63,6 +64,16 @@ def get_chunk_by_id(id:str):
     page =  metadatas.get("page",-1)
     content= chunks.get("documents")[0]
     return {"id":id,"file_id":file_id,"page":page,"content":content}
+
+def get_chunk_file_id_and_page_by_id(id:str):
+    chunks = collection.get(ids=[id])
+    if len(chunks) == 0:
+        raise NOT_FOUND_HTTPEXCEPTION(f"No chunk found with id {id}")
+    metadatas =  chunks.get("metadatas")[0]
+    file_id =  metadatas.get("file_id")
+    file_info = fetch_row_by_id("files",file_id)
+    page =  metadatas.get("page",-1)
+    return {"file_name":file_info.get('name'),"page":page, "file_path":file_info.get('file_path')}
 
 def get_all_chunks():
     print("get_all_chunks ")
