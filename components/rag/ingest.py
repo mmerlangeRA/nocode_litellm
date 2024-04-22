@@ -1,25 +1,10 @@
 import uuid
-import chromadb
-from langchain_community.vectorstores import Chroma
-from langchain_openai import OpenAIEmbeddings
-
-from settings.settings import settings
 from components.rag.get_document_from_url import get_Documents_from_url
 import tiktoken
+from components.rag.chroma_client import persistent_client, chroma_collection,langchain_chroma
 
+collection = chroma_collection
 
-persist_directory="./"+settings().chroma.directory
-collection_name=settings().chroma.collection_name
-persistent_client = chromadb.PersistentClient(path=persist_directory)
-collection = persistent_client.get_or_create_collection(collection_name)
-
-embedding_function = OpenAIEmbeddings()
-
-langchain_chroma = Chroma(
-    client=persistent_client,
-    collection_name=collection_name,
-    embedding_function=embedding_function,
-)
 
 def delete_collection(collection_name:str)->bool:
     persistent_client.delete_collection(collection_name)

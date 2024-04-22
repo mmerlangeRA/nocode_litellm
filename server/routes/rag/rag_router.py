@@ -5,7 +5,7 @@ from typing import Literal
 from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import BaseModel, Field
 from components.rag.ingest import delete_chunks_by_file_id, delete_collection, ingest_document
-from components.rag.query import get_chunk_by_id, query_documents
+from components.rag.query import get_all_chunks, get_chunk_by_id, query_documents
 from server.utils.errors import INTERNAL_SERVER_ERROR_HTTPEXCEPTION
 from server.utils.tokens import verify_token
 logger = logging.getLogger(__name__)
@@ -70,6 +70,15 @@ async def query_route(request:Request, queryRequest: QueryRequest, current_user:
          logger.error(e)
          raise INTERNAL_SERVER_ERROR_HTTPEXCEPTION(e)
     
+
+@rag_router.get("/get_all_chunks", tags=["rag"])
+async def get_chunk(request:Request) :
+    try:
+         chunks= get_all_chunks()
+         return chunks
+    except Exception as e:
+         logger.error(e)
+         raise INTERNAL_SERVER_ERROR_HTTPEXCEPTION(e)
 
 @rag_router.get("/get_chunk/{chunk_id}", tags=["rag"])
 async def get_chunk(chunk_id: str,request:Request) :
