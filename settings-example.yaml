@@ -1,0 +1,33 @@
+# The default configuration file.
+# Syntax in `settings/settings.py`
+server:
+  env_name: ${APP_ENV:prod}
+  port: ${PORT:8001}
+  cors:
+    enabled: true
+    allow_origins: ["*"]
+    allow_methods: ["*"]
+    allow_headers: ["*"]
+  base_url: https://nocode.nemato-data.fr
+
+model_keys:
+  openai: xxxx
+  mistralai: xxxx
+
+token:
+  secret_key: wizzard
+  admin_key: admin
+
+supabase:
+  url: https://xxxx.supabase.co
+  anon_key: xxxx
+  service_role_key: xxxx
+
+langsmith:
+  enabled: true
+  api_key: xxxxx
+
+chroma:
+  directory: chroma_db_sanofi
+  collection_name: sanofi_items
+  dockerized: true

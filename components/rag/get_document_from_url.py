@@ -10,18 +10,9 @@ import requests
 
 
 async def get_file_extension_from_url(url:str)->str:
-    print("url",url)
     response = requests.head(url, allow_redirects=True)
 
-    print("response", response.text )
-    print("Status Code:", response.status_code)
-    print("Headers:", response.headers)
-    if response.status_code != 200:
-        print("Error:", response.status_code)
-        print("Error details:", response.text)
-
     content_type = response.headers.get('Content-Type')
-    print("content_type",content_type)
     # Map common MIME types to file extensions
     # This is a basic mapping; you may need to expand it based on your needs
     mime_type_to_extension = {
@@ -64,12 +55,11 @@ async def get_Documents_from_url(url:str,file_name:str,chunk_size=1000,chunk_ove
             os.makedirs(tmp_directory)
         tmp_file_name= str(uuid.uuid1())+ "_"+file_name
         tmp_file_path = os.path.join(tmp_directory, tmp_file_name)
-        print(tmp_file_path)
+
         url_to_use= download_doc(url, tmp_file_path)
-        print("loading")
+
         loader_function = extension_to_loader.get(file_extension)
         
-        print(loader_function)
         if loader_function is None:
             raise BAD_REQUEST_HTTPEXCEPTION("Unsupported extention")
         loader = loader_function(url_to_use)

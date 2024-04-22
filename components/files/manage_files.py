@@ -1,6 +1,5 @@
 import base64
-import io
-import json
+import logging
 from fastapi import HTTPException, UploadFile
 from pydantic import BaseModel
 from  components.workspaces.manage_workspaces import createFileWorkspace
@@ -12,6 +11,8 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship
 from datetime import datetime
 from settings.settings import settings
+
+logger = logging.getLogger(__name__)
 
 Base = declarative_base()
 
@@ -70,12 +71,12 @@ async def create_file(file: UploadFile, fileRecord:FileCreationRequest, workspac
 
 
 def getFileByUrl(file_id:str):
-    print("getFileByUrl",file_id)
+    logger.debug("getFileByUrl",file_id)
     supabase_url = settings().supabase.url
     supabase_key =settings().supabase.anon_key
-    print(supabase_url, supabase_key)
+    logger.debug(supabase_url, supabase_key)
     res= get_supabase_client(supabase_url,supabase_key).storage.from_('files').create_signed_url(file_id,60 * 60 * 24)
-    print(res)
+    logger.debug(res)
     return res
 
 

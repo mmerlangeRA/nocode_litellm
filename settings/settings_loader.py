@@ -29,8 +29,7 @@ logger = logging.getLogger(__name__)
 _settings_folder = PROJECT_ROOT_PATH
 
 
-print("LLM_PROFILES")
-print(os.environ.get("LLM_PROFILES", "NO profile"))
+print(f'LLM_PROFILES :{os.environ.get("LLM_PROFILES", "NO profile")}')
 # if running in unittest, use the test profile
 _test_profile = ["test"] if "tests.fixtures" in sys.modules else []
 

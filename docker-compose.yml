@@ -15,17 +15,11 @@ services:
   chroma:
     image: ghcr.io/chroma-core/chroma:0.4.25.dev141
     volumes:
-      - chroma-data:/chroma/chroma
+      - ./chroma-data:/chroma/chroma
     ports:
       - 8000:8000
     networks:
       - app-network
-
-volumes:
-  chroma-data:
-    driver: local
-  backups:
-    driver: local
 
 networks:
   net:

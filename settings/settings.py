@@ -68,12 +68,6 @@ class ServerSettings(BaseModel):
     base_url: str = Field(default="http://localhost:8001")
 
 
-class DataSettings(BaseModel):
-    local_data_folder: str = Field(
-        description="Path to local storage."
-        "It will be treated as an absolute path if it starts with /"
-    )
-
 class ModelKeys(BaseModel):
     openai: str = Field(
         description="openai key."
@@ -95,18 +89,14 @@ class LangsmithSettings(BaseModel):
     enabled:bool = False
     api_key: str
 
-class DeeplSettings(BaseModel):
-    api_key: str
-
 class ChromaSettings(BaseModel):
     directory:str
     collection_name:str
+    dockerized: bool = True
 
 class Settings(BaseModel):
     server: ServerSettings
-    data: DataSettings
     model_keys: ModelKeys
-    deepl: DeeplSettings
     token: Token
     supabase: SupaBaseSettrings
     langsmith:LangsmithSettings
