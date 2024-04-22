@@ -1,6 +1,10 @@
 # nocode_litellm
 
-## install and start
+## Description
+
+This backend provides APIs for
+
+## Local installation and development
 
 ### Virtual env
 
@@ -18,18 +22,22 @@ pip install -r requirements.txt
 export LLM_PROFILES=local
 python -m uvicorn server.main:app --reload --port 8001
 
-## generate documentation
+## Docker installation
 
+docker-compose up
+
+## Documentation
+
+APIs are fully available at site-url/docs
+
+**Generatioon**
+
+```
 export LLM_PROFILES=local
 python -m scripts.extract_openapi server.main:app --out docs/openapi.json
+```
 
-## Main concepts
 
-Routes call services. A route should call one service.
-
-* A service :
-  * has an id a description and watches consumptions
-  * uses tools to perform its tasks
 
 
 ## Todo

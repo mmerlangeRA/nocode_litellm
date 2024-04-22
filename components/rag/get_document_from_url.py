@@ -56,7 +56,7 @@ async def get_Documents_from_url(url:str,file_name:str,chunk_size=1000,chunk_ove
             'pptx': UnstructuredPowerPointLoader,
             'html': WebBaseLoader
         }
-
+        print(f'file_extension is {file_extension}')
         current_working_directory = os.getcwd()
         tmp_directory = os.path.join(current_working_directory, "tmp")
         isExist = os.path.exists(tmp_directory)
@@ -64,8 +64,9 @@ async def get_Documents_from_url(url:str,file_name:str,chunk_size=1000,chunk_ove
             os.makedirs(tmp_directory)
         tmp_file_name= str(uuid.uuid1())+ "_"+file_name
         tmp_file_path = os.path.join(tmp_directory, tmp_file_name)
+        print(tmp_file_path)
         url_to_use= download_doc(url, tmp_file_path)
-
+        print("loading")
         loader_function = extension_to_loader.get(file_extension)
         
         print(loader_function)
