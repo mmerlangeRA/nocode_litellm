@@ -17,6 +17,7 @@ data:
 model_keys:
   openai: xx
   mistralai: xx
+  groqai: xx
 
 token:
   secret_key: xx
