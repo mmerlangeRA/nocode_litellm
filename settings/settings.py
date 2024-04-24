@@ -75,6 +75,9 @@ class ModelKeys(BaseModel):
     mistralai: str = Field(
         description="mistralai key."
     )
+    groqai: str = Field(
+        description="groqai key."
+    )
 
 class Token(BaseModel):
     secret_key: str

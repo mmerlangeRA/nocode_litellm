@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import Literal
+from typing import Any, Literal, List
 
 
 class OpenAIMessage(BaseModel):
@@ -13,13 +13,14 @@ class OpenAIMessage(BaseModel):
 
 
 class ChatBody(BaseModel):
-    model:str
-    messages: list[OpenAIMessage]
+    model: str
+    messages: List[OpenAIMessage]
     include_sources: bool = True
     stream: bool = False
+    tools: List[Any] = []
 
-    model_config = {
-        "json_schema_extra": {
+    class Config:
+        schema_extra = {
             "examples": [
                 {
                     "messages": [
@@ -32,9 +33,10 @@ class ChatBody(BaseModel):
                             "content": "How do you fry an egg?",
                         },
                     ],
+                    "tools": [],
+                    "include_sources": True,
                     "stream": False,
-                    "model":"gpt-3.5-turbo"
+                    "model": "gpt-3.5-turbo"
                 }
             ]
         }
-    }
