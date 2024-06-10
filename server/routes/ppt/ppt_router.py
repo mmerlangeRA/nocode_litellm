@@ -34,6 +34,7 @@ ppt_router = APIRouter(prefix="/v1/ppt")
 async def ppt_generation_route(request:Request,queryRequest: PPTCreationRequest) :
     """Generate a slide presentation"""
     try:
+         print(queryRequest)
          public_path = await create_presentation(queryRequest.topic, queryRequest.slide_titles, queryRequest.slide_contents)
          return {"url":public_path}
     except Exception as e:

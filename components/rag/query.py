@@ -29,17 +29,17 @@ collection = chroma_collection
 
 
 #needs more filtering
-async def query_documents(query:str,source_count:int = 8, min_confidence = 0.2, file_ids:List[str]=[]):
+async def query_documents(query:str,source_count:int = 10, min_confidence = 0.45, file_ids:List[str]=[]):
     print(f'query: {query}')
     if file_ids and len(file_ids)>0:
         filter = {"file_id": {"$in": file_ids}}
         results = langchain_chroma.similarity_search_with_score(query, source_count, filter=filter)
     else :
         results =  langchain_chroma.similarity_search_with_score(query, source_count)
-    #print(results)
+    print(results)
 
     filtered_docs = [doc for doc, score in results if score > min_confidence]
-    print(f'returning {len(filtered_docs)} chunks')
+    print(f'returning {len(filtered_docs)} chunks confidence is {min_confidence}')
     #print(filtered_docs)
     #print(transform_documents_to_json(filtered_docs))
     return transform_documents_to_json(filtered_docs)
@@ -56,10 +56,12 @@ def get_chunk_by_id(id:str):
     return {"id":id,"file_id":file_id,"page":page,"content":content}
 
 def get_chunk_file_id_and_page_by_id(id:str):
-    chunks = collection.get(ids=[id])
-    if len(chunks) == 0:
+    chunk = collection.get(ids=[id])
+    if len(chunk) == 0:
+        print(f"No chunk found with id {id}")
         raise NOT_FOUND_HTTPEXCEPTION(f"No chunk found with id {id}")
-    metadatas =  chunks.get("metadatas")[0]
+    print(chunk)
+    metadatas =  chunk.get("metadatas")[0]
     file_id =  metadatas.get("file_id")
     file_info = fetch_row_by_id("files",file_id)
     page =  metadatas.get("page",-1)

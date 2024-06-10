@@ -69,6 +69,19 @@ async def query_route(request:Request, queryRequest: QueryRequest, current_user:
     except Exception as e:
          logger.error(e)
          raise INTERNAL_SERVER_ERROR_HTTPEXCEPTION(e)
+
+@rag_router.post("/query_with_links", tags=["rag"])
+async def query_route(request:Request, queryRequest: QueryRequest) :
+    try:
+         mostSimilarChunks = await query_documents(queryRequest.query,10,0.3, queryRequest.file_ids)
+         for chunk in mostSimilarChunks:
+               chunk_id = chunk["id"]
+               chunk["url"] = f"https://nocode.nemato-data.fr/v1/rag/get_chunk/{chunk_id}"
+
+         return mostSimilarChunks
+    except Exception as e:
+         logger.error(e)
+         raise INTERNAL_SERVER_ERROR_HTTPEXCEPTION(e)
     
 
 @rag_router.get("/get_all_chunks", tags=["rag"])
