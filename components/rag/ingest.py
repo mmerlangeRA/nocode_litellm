@@ -18,26 +18,26 @@ def delete_collection(collection_name:str)->bool:
     return True
 
 def delete_chunks_by_file_id(file_id:str):
-    logger.log("in delete_chunks_by_file_id")
+    logger.debug(f"in delete_chunks_by_file_id {file_id}")
     ids_to_delete=[]
     query_where = {"file_id": file_id}
     docs = collection.get( where=query_where)
-    logger.log(docs)
+    logger.debug(docs)
 
     ids_to_delete = docs.get("ids") or []
-    logger.log(ids_to_delete)
+    logger.debug(ids_to_delete)
     if(len(ids_to_delete)==0):
         return True
     
     collection.delete(ids=ids_to_delete)
-    logger.log("chunks deleted")
+    logger.debug("chunks deleted")
     return True
 
 async def ingest_document(url:str, file_id:str, file_name:str,embeddingsProvider:str,user_id:str):
-    logger.log("ingest_document "+file_name)
+    logger.debug("ingest_document "+file_name)
     encoding = tiktoken.encoding_for_model("gpt-3.5-turbo")
     docs = await get_Documents_from_url(url,file_name)
-    logger.log(docs)
+    logger.debug(docs)
     ids=[]
     #print("docs generated",len(docs))
     for d in docs:
@@ -47,14 +47,14 @@ async def ingest_document(url:str, file_id:str, file_name:str,embeddingsProvider
         ids.append(id)
         d.metadata["id"] = id
         d.metadata["source"] = ""
-    logger.log(docs)
-    logger.log(ids)
+    logger.debug(docs)
+    logger.debug(ids)
     langchain_chroma.add_texts(
         texts=[d.page_content for d in docs],
         metadatas=[d.metadata for d in docs],
         ids=ids
     ) 
-    logger.log("There are", langchain_chroma._collection.count(), "in the collection")
+    logger.debug("There are", langchain_chroma._collection.count(), "in the collection")
    
 
 class FileItem:

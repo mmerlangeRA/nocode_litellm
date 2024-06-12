@@ -1,4 +1,5 @@
 import os
+import re
 from typing import List
 import uuid
 from langchain_community.document_loaders import WebBaseLoader, PyPDFLoader,Docx2txtLoader,UnstructuredPowerPointLoader
@@ -8,6 +9,13 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_core.documents.base import Document
 import requests
 
+def clean_text(text):
+    # Remove hyphenation at line breaks
+    text = re.sub(r'(\w+)-\n(\w+)', r'\1\2', text)
+    # Remove line breaks within paragraphs
+    text = re.sub(r'(?<!\n)\n(?!\n)', ' ', text)
+    # Handle special characters and other common OCR issues here as needed
+    return text
 
 async def get_file_extension_from_url(url:str)->str:
     response = requests.head(url, allow_redirects=True)
@@ -63,7 +71,12 @@ async def get_Documents_from_url(url:str,file_name:str,chunk_size=1000,chunk_ove
         if loader_function is None:
             raise BAD_REQUEST_HTTPEXCEPTION("Unsupported extention")
         loader = loader_function(url_to_use)
-        documents = loader.load()
+        documents:List[Document] = loader.load()
+
+        #Clean text a bit
+        for document in documents:
+            document.page_content = clean_text(document.page_content)
+
         text_splitter = RecursiveCharacterTextSplitter(
             chunk_size=chunk_size,
             chunk_overlap=chunk_overlap,
