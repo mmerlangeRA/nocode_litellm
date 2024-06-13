@@ -5,8 +5,7 @@ import os
 from fastapi import Depends, FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from injector import Injector
-from server.database.client import SupabaseClient
-
+from components.database.main import init_db
 from server.routes.health.health_router import health_router
 from server.routes.completion.completion_router import completions_router
 from server.routes.token.token_router import token_router
@@ -24,19 +23,18 @@ from contextlib import asynccontextmanager
 
 logger = logging.getLogger(__name__)
 
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    init_db()
+    yield
+
 def create_app(root_injector: Injector) -> FastAPI:
-    
-    @asynccontextmanager
-    async def lifespan(app: FastAPI):
-        supabase_client = root_injector.get(SupabaseClient)
-        yield
-        await supabase_client.close()
     
     # Start the API
     async def bind_injector_to_request(request: Request) -> None:
         request.state.injector = root_injector
 
-    app = FastAPI(lifespan = lifespan,dependencies=[Depends(bind_injector_to_request)])
+    app = FastAPI(lifespan=lifespan, dependencies=[Depends(bind_injector_to_request)])
 
     if not os.path.exists("static"): 
         os.makedirs("static")

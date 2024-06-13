@@ -1,6 +1,6 @@
 from langchain_community.vectorstores import Chroma
 from langchain_openai import OpenAIEmbeddings
-from components.files.manage_files import fetch_row_by_id
+from components.files.manage_files import get_file_info
 from server.utils.errors import NOT_FOUND_HTTPEXCEPTION
 from typing import Dict, List, NamedTuple
 from langchain.retrievers import ContextualCompressionRetriever
@@ -63,7 +63,7 @@ def get_chunk_file_id_and_page_by_id(id:str):
     print(chunk)
     metadatas =  chunk.get("metadatas")[0]
     file_id =  metadatas.get("file_id")
-    file_info = fetch_row_by_id("files",file_id)
+    file_info = get_file_info(file_id)
     page =  metadatas.get("page",-1)
     return {"file_name":file_info.get('name'),"page":page, "file_path":file_info.get('file_path')}
 

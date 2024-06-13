@@ -1,15 +1,18 @@
 import logging
+import os
 import uuid
-from components.rag.get_document_from_url import get_Documents_from_url
+from components.rag.get_document_from_url import get_Documents_from_local_path, get_Documents_from_url
 import tiktoken
 from components.rag.chroma_client import persistent_client, chroma_collection,langchain_chroma
+from os import listdir
+from os.path import isfile, join
 
+from components.database.main import insert_file_record
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
 collection = chroma_collection
-
 
 def delete_collection(collection_name:str)->bool:
     persistent_client.delete_collection(collection_name)
@@ -33,13 +36,42 @@ def delete_chunks_by_file_id(file_id:str):
     logger.debug("chunks deleted")
     return True
 
+async def ingest_folder(folder_name,db, user_id="me"):
+
+    mypath=os.path.join(os.getcwd(),folder_name)
+
+    print(f'mypath is {mypath}')
+    onlyfiles = [os.path.join(mypath,f) for f in listdir(mypath) if isfile(join(mypath, f))]
+    for file_path in onlyfiles:
+        print(f'file_path is {file_path}')
+       
+        file_name=os.path.basename(file_path)
+        file_id= insert_file_record(db,file_name)
+        docs = await get_Documents_from_local_path(file_path,file_name)
+         #logger.debug(docs)
+        ids=[]
+        print("docs generated",len(docs))
+        for d in docs:
+            d.metadata["file_id"] = file_id
+            d.metadata["user_id"] = user_id
+            id = str(uuid.uuid1())
+            ids.append(id)
+            d.metadata["id"] = id
+            d.metadata["source"] = ""
+
+        langchain_chroma.add_texts(
+            texts=[d.page_content for d in docs],
+            metadatas=[d.metadata for d in docs],
+            ids=ids
+        ) 
+
 async def ingest_document(url:str, file_id:str, file_name:str,embeddingsProvider:str,user_id:str):
     logger.debug("ingest_document "+file_name)
-    encoding = tiktoken.encoding_for_model("gpt-3.5-turbo")
+    #encoding = tiktoken.encoding_for_model("gpt-3.5-turbo")
     docs = await get_Documents_from_url(url,file_name)
-    logger.debug(docs)
+    #logger.debug(docs)
     ids=[]
-    #print("docs generated",len(docs))
+    print("docs generated",len(docs))
     for d in docs:
         d.metadata["file_id"] = file_id
         d.metadata["user_id"] = user_id
@@ -47,14 +79,13 @@ async def ingest_document(url:str, file_id:str, file_name:str,embeddingsProvider
         ids.append(id)
         d.metadata["id"] = id
         d.metadata["source"] = ""
-    logger.debug(docs)
-    logger.debug(ids)
+
     langchain_chroma.add_texts(
         texts=[d.page_content for d in docs],
         metadatas=[d.metadata for d in docs],
         ids=ids
     ) 
-    logger.debug("There are", langchain_chroma._collection.count(), "in the collection")
+    #logger.debug("There are", langchain_chroma._collection.count(), "in the collection")
    
 
 class FileItem:

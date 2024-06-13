@@ -1,7 +1,6 @@
 from typing import List, Optional
 import uuid
 from pydantic import BaseModel, Field
-from server.database.client import  create_service,finish_service
 from server.utils.errors import INTERNAL_SERVER_ERROR_HTTPEXCEPTION
 import logging
 from enum import Enum
@@ -30,7 +29,7 @@ class Service():
     description: Optional[str] = "none"
 
     def __init__(self, service_type: str,user_id:str,description="none"):
-        self.service_id = create_service(user_id,service_type,description=description)
+        #self.service_id = create_service(user_id,service_type,description=description)
         self.service_type = service_type
         self.user_id = user_id
 
@@ -39,5 +38,5 @@ class Service():
        # add_user_consumption(self.user_id, token_in, token_out, self.service_type, self.service_id, model)
         return self.consumptions[-1]
     
-    def finish(self):
-        finish_service(self.service_id)
+    # def finish(self):
+    #     finish_service(self.service_id)

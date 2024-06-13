@@ -27,13 +27,101 @@
         }
       }
     },
-    "/v1/completion": {
+    "/v1/completion/completion": {
       "post": {
         "tags": [
           "completion"
         ],
         "summary": "Completion Route",
-        "operationId": "completion_route_v1_completion_post",
+        "operationId": "completion_route_v1_completion_completion_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChatBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/v1/completion/test": {
+      "post": {
+        "tags": [
+          "completion"
+        ],
+        "summary": "Test Route",
+        "operationId": "test_route_v1_completion_test_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChatBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/v1/completion/firstresponse": {
+      "post": {
+        "tags": [
+          "completion"
+        ],
+        "summary": "Test Route",
+        "operationId": "test_route_v1_completion_firstresponse_post",
         "requestBody": {
           "content": {
             "application/json": {
@@ -253,14 +341,23 @@
         }
       }
     },
-    "/v1/files/get_file/{file_id}": {
+    "/v1/files/get_file/{user_id}/{file_id}": {
       "get": {
         "tags": [
           "load document"
         ],
         "summary": "Get File",
-        "operationId": "get_file_v1_files_get_file__file_id__get",
+        "operationId": "get_file_v1_files_get_file__user_id___file_id__get",
         "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "User Id"
+            }
+          },
           {
             "name": "file_id",
             "in": "path",
@@ -271,6 +368,45 @@
             }
           }
         ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/files/upload-pdf/": {
+      "post": {
+        "tags": [
+          "load document"
+        ],
+        "summary": "Upload Pdf",
+        "operationId": "upload_pdf_v1_files_upload_pdf__post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_upload_pdf_v1_files_upload_pdf__post"
+              }
+            }
+          },
+          "required": true
+        },
         "responses": {
           "200": {
             "description": "Successful Response",
@@ -388,13 +524,58 @@
         }
       }
     },
+    "/v1/rag/ingest_local_folder": {
+      "post": {
+        "tags": [
+          "rag"
+        ],
+        "summary": "Ingest Route",
+        "operationId": "ingest_route_v1_rag_ingest_local_folder_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "folder_name",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "default": "sanofi_files",
+              "title": "Folder Name"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/rag/ingest": {
       "post": {
         "tags": [
           "rag"
         ],
         "summary": "Ingest Route",
-        "description": "Use this api to get information from reference database",
+        "description": "Use this api to ingest information for reference database",
         "operationId": "ingest_route_v1_rag_ingest_post",
         "requestBody": {
           "content": {
@@ -475,6 +656,64 @@
             "HTTPBearer": []
           }
         ]
+      }
+    },
+    "/v1/rag/query_with_links": {
+      "post": {
+        "tags": [
+          "rag"
+        ],
+        "summary": "Query Route",
+        "operationId": "query_route_v1_rag_query_with_links_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QueryRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/rag/get_all_chunks": {
+      "get": {
+        "tags": [
+          "rag"
+        ],
+        "summary": "Get Chunk",
+        "operationId": "get_chunk_v1_rag_get_all_chunks_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
       }
     },
     "/v1/rag/get_chunk/{chunk_id}": {
@@ -780,6 +1019,20 @@
         ],
         "title": "Action"
       },
+      "Body_upload_pdf_v1_files_upload_pdf__post": {
+        "properties": {
+          "file": {
+            "type": "string",
+            "format": "binary",
+            "title": "File"
+          }
+        },
+        "type": "object",
+        "required": [
+          "file"
+        ],
+        "title": "Body_upload_pdf_v1_files_upload_pdf__post"
+      },
       "ChatBody": {
         "properties": {
           "model": {
@@ -802,6 +1055,12 @@
             "type": "boolean",
             "title": "Stream",
             "default": false
+          },
+          "tools": {
+            "items": {},
+            "type": "array",
+            "title": "Tools",
+            "default": []
           }
         },
         "type": "object",
@@ -809,23 +1068,7 @@
           "model",
           "messages"
         ],
-        "title": "ChatBody",
-        "examples": [
-          {
-            "messages": [
-              {
-                "content": "You are a rapper. Always answer with a rap.",
-                "role": "system"
-              },
-              {
-                "content": "How do you fry an egg?",
-                "role": "user"
-              }
-            ],
-            "model": "gpt-3.5-turbo",
-            "stream": false
-          }
-        ]
+        "title": "ChatBody"
       },
       "GenerateTokenBody": {
         "properties": {
@@ -871,6 +1114,10 @@
       "HealthResponse": {
         "properties": {
           "status": {
+            "type": "string",
+            "enum": [
+              "ok"
+            ],
             "const": "ok",
             "title": "Status",
             "default": "ok"

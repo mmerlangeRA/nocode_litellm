@@ -1,11 +1,13 @@
 import json
 import logging
 import os
+import sqlite3
 from typing import Literal
 from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import BaseModel, Field
-from components.rag.ingest import delete_chunks_by_file_id, delete_collection, ingest_document
+from components.rag.ingest import delete_chunks_by_file_id, delete_collection, ingest_document, ingest_folder
 from components.rag.query import get_all_chunks, get_chunk_by_id, query_documents
+from components.database.main import get_db
 from server.utils.errors import INTERNAL_SERVER_ERROR_HTTPEXCEPTION
 from server.utils.tokens import verify_token
 logger = logging.getLogger(__name__)
@@ -47,9 +49,20 @@ class QueryRequest(BaseModel):
 
 rag_router = APIRouter(prefix="/v1/rag")
 
+@rag_router.post("/ingest_local_folder", tags=["rag"])
+async def ingest_route(request:Request,folder_name="sanofi_files", current_user: dict = Depends(verify_token), db: sqlite3.Connection = Depends(get_db)) :
+     try:
+          print("ingest_local_folder")
+          print()
+          await ingest_folder(folder_name,db)
+          return {"response":"ingested"}
+     except Exception as e:
+          print(e)
+          raise e
+
 @rag_router.post("/ingest", tags=["rag"])
 async def ingest_route(request:Request,ingestRequest: IngestRequest, current_user: dict = Depends(verify_token)) :
-     '''Use this api to get information from reference database'''
+     '''Use this api to ingest information for reference database'''
      try:
           print("ingest_route")
           print()
@@ -58,8 +71,6 @@ async def ingest_route(request:Request,ingestRequest: IngestRequest, current_use
      except Exception as e:
           print(e)
           raise e
-
-    
 
 @rag_router.post("/query", tags=["rag"])
 async def query_route(request:Request, queryRequest: QueryRequest, current_user: dict = Depends(verify_token)) :

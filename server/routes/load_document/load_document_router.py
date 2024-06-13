@@ -2,14 +2,17 @@ import base64
 import os
 from typing import Literal
 from uuid import uuid4
-from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi import APIRouter, Depends, File, HTTPException, Request, UploadFile
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 from components.rag.get_document_from_url import get_Documents_from_url
 from components.files.manage_files import getFileByUrl
+from components.database.main import get_db, insert_file_record
 from server.utils.errors import FORBIDDEN_HTTPEXCEPTION
 from server.utils.tokens import UserRights, generate_token, verify_token
 from settings.settings import settings
+import shutil
+import sqlite3
 
 
 load_document_router = APIRouter(prefix="/v1/files")
@@ -62,3 +65,22 @@ async def upload_image(request:Request,imageBody: uploadImageBody):
 async def get_file(user_id:str,file_id:str, request:Request):
     print("get_file "+user_id+"/"+file_id)
     return getFileByUrl(user_id+"/"+file_id)
+
+
+@load_document_router.post("/upload-pdf/",tags=["load document"])
+async def upload_pdf(file: UploadFile = File(...), db: sqlite3.Connection = Depends(get_db)):
+    # Ensure the uploaded file is a PDF
+    if file.content_type != 'application/pdf':
+        return JSONResponse(status_code=400, content={"error": "The uploaded file is not a PDF."})
+
+    # Define the path where the file will be saved
+    file_location = f"static/{file.filename}"
+
+    # Save the uploaded file
+    with open(file_location, "wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+
+    # Insert file record into the database
+    file_id = insert_file_record(db, file.filename)
+
+    return {"filename": file.filename, "id": file_id}
