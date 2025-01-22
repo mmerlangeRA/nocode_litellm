@@ -9,8 +9,6 @@ from components.rag.get_document_from_url import get_Documents_from_url
 from server.utils.errors import FORBIDDEN_HTTPEXCEPTION, INTERNAL_SERVER_ERROR_HTTPEXCEPTION
 from server.utils.tokens import UserRights, generate_token, verify_token
 from settings.settings import settings
-from langchain_community.chat_models import ChatLiteLLM
-
 from langchain.chains.summarize import load_summarize_chain
 from langchain_community.document_loaders import WebBaseLoader
 from langchain.chains import MapReduceDocumentsChain, ReduceDocumentsChain

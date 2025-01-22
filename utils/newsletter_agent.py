@@ -8,12 +8,10 @@ from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain.agents import AgentExecutor, create_openai_functions_agent
 from langchain_openai import ChatOpenAI
 from pydantic import BaseModel
-from nocode_litellm.tools.scraping.list_urls import list_all_article_urls_from_json_instructions
+from tools.scraping.list_urls import list_all_article_urls_from_json_instructions
 from tools.summarize import summarize_text
 from server.services.chat_service import ChatService
-
-from utils.CustomChatLiteLLM import CustomChatLiteLLM
-from nocode_litellm.tools.scraping.scrapper import QueryModel,BSQueryExecutor
+from tools.scraping.scrapper import QueryModel,BSQueryExecutor
 from langchain_core.output_parsers.json import parse_json_markdown
 
 

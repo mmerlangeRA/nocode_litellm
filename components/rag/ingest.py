@@ -2,7 +2,6 @@ import logging
 import os
 import uuid
 from components.rag.get_document_from_url import get_Documents_from_local_path, get_Documents_from_url
-import tiktoken
 from components.rag.chroma_client import persistent_client, chroma_collection,langchain_chroma
 from os import listdir
 from os.path import isfile, join

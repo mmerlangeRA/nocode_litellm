@@ -37,7 +37,7 @@ active_profiles: list[str] = unique_list(
     ["default"]
     + [
         item.strip()
-        for item in os.environ.get("LLM_PROFILES", "").split(",")
+        for item in os.environ.get("LLM_PROFILES", "local").split(",")
         if item.strip()
     ]
     + _test_profile

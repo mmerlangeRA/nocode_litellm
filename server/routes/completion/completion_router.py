@@ -2,7 +2,6 @@ import os
 from typing import Literal
 from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import BaseModel, Field
-from litellm import completion, ModelResponse, CustomStreamWrapper,acompletion
 from components.chats.groq_tools import run_conversation, run_conversation_no_tools
 from server.utils.common_interfaces import OpenAIMessage,ChatBody
 from server.utils.errors import FORBIDDEN_HTTPEXCEPTION

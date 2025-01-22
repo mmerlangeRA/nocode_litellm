@@ -83,11 +83,6 @@ class Token(BaseModel):
     secret_key: str
     admin_key: str
 
-class SupaBaseSettrings(BaseModel):
-  url: str
-  anon_key: str
-  service_role_key: str
-
 class LangsmithSettings(BaseModel):
     enabled:bool = False
     api_key: str
@@ -101,7 +96,6 @@ class Settings(BaseModel):
     server: ServerSettings
     model_keys: ModelKeys
     token: Token
-    supabase: SupaBaseSettrings
     langsmith:LangsmithSettings
     chroma:ChromaSettings
 

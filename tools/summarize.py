@@ -1,18 +1,13 @@
 import json
-from typing import Any
+from typing import Any, List
 from langchain_openai import OpenAI
 from pydantic import BaseModel, Field
-from litellm import completion, ModelResponse, CustomStreamWrapper
-from pyparsing import List
 from server.services.summarize_service import SummarizeService
 from tools.scraping.scrapper import BSQueryExecutor, get_base_url
-from server.services.chat_service import ChatService
-from utils.CustomChatLiteLLM import CustomChatLiteLLM
 from components.rag.get_document_from_url import get_Documents_from_url
 from server.utils.errors import FORBIDDEN_HTTPEXCEPTION
 from server.utils.tokens import UserRights, generate_token, verify_token
 from settings.settings import settings
-from langchain_community.chat_models import ChatLiteLLM
 from langchain.chains.summarize import load_summarize_chain
 from langchain_community.document_loaders import WebBaseLoader
 from langchain.chains import MapReduceDocumentsChain, ReduceDocumentsChain
@@ -35,12 +30,7 @@ default_combine_prompt = """
     BULLET POINT SUMMARY:
     """
 
-'''
-    service_id= uuid.UUID('{12345678-1234-5678-1234-567812345678}')
-    print("service_id = "+str(service_id))
-    llm = CustomChatLiteLLM(service_id=service_id,model=model)
-    print("CustomChatLiteLLM initialized it seems")
-'''
+
 
 
 async def summarize_text(text:str, model:str = "gpt-3.5-turbo-instruct", combine_prompt:str = default_combine_prompt):

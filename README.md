@@ -26,7 +26,8 @@ You need to select a profile. For instance if you use "local", you need to have 
 
 ```bash
 export LLM_PROFILES=local
-python -m uvicorn server.main:app --reload --port 8001
+python -m uvicorn server.main:app --reload --port 8001 --host 0.0.0.0
+
 
 ```
 

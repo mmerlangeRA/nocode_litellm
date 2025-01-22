@@ -1,26 +1,27 @@
-from pydantic import BaseModel, Field
-from typing import Any, Literal, List
+from pydantic import BaseModel, Field, ConfigDict
+from typing import Any, Literal, List, Union
 
 
 class OpenAIMessage(BaseModel):
-    """Inference result, with the source of the message.
+    """
+    Inference result, with the source of the message.
 
-    Role could be the assistant or system
-    (providing a default response, not AI generated).
+    Role could be the assistant, system
+    (providing a default response, not AI generated), or user.
     """
     role: Literal["assistant", "system", "user"] = Field(default="user")
-    content: str | None
+    content: Union[str, None]
 
 
 class ChatBody(BaseModel):
     model: str
     messages: List[OpenAIMessage]
-    include_sources: bool = True
-    stream: bool = False
-    tools: List[Any] = []
+    include_sources: bool = Field(default=True)
+    stream: bool = Field(default=False)
+    tools: List[Any] = Field(default_factory=list)
 
-    class Config:
-        schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "examples": [
                 {
                     "messages": [
@@ -36,7 +37,8 @@ class ChatBody(BaseModel):
                     "tools": [],
                     "include_sources": True,
                     "stream": False,
-                    "model": "gpt-3.5-turbo"
+                    "model": "gpt-3.5-turbo",
                 }
             ]
         }
+    )

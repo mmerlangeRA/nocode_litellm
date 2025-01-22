@@ -3,14 +3,11 @@ import os
 from typing import Literal
 from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import BaseModel, Field
-from litellm import completion, ModelResponse, CustomStreamWrapper
 from tools.web_search import scrap_urls_to_Documents
 from tools.scraping.scrapper import BSQueryExecutor, ScrapRequest
 from server.utils.errors import FORBIDDEN_HTTPEXCEPTION
 from server.utils.tokens import UserRights, generate_token, verify_token
 from settings.settings import settings
-from langchain_community.chat_models import ChatLiteLLM
-
 from langchain.chains.summarize import load_summarize_chain
 from langchain_community.document_loaders import WebBaseLoader
 from langchain.chains import MapReduceDocumentsChain, ReduceDocumentsChain

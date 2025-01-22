@@ -22,8 +22,3 @@ model_keys:
 token:
   secret_key: xx
   admin_key: xx
-
-supabase:
-  url: xx
-  anon_key: xx
-  service_role_key: xx

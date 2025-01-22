@@ -2,7 +2,6 @@ import os
 from typing import Literal
 from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import BaseModel, Field
-from litellm import completion, ModelResponse, CustomStreamWrapper,acompletion
 from server.utils.errors import FORBIDDEN_HTTPEXCEPTION
 from server.utils.tokens import UserRights, generate_token, verify_token
 from settings.settings import settings

@@ -29,7 +29,7 @@ collection = chroma_collection
 
 
 #needs more filtering
-async def query_documents(query:str,source_count:int = 10, min_confidence = 0.45, file_ids:List[str]=[]):
+async def query_documents(query:str,source_count:int = 10, min_confidence = 0.2, file_ids:List[str]=[]):
     print(f'query: {query}')
     if file_ids and len(file_ids)>0:
         filter = {"file_id": {"$in": file_ids}}

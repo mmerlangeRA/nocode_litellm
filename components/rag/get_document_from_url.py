@@ -56,13 +56,15 @@ async def get_Documents_from_url(url:str,file_name:str,chunk_size=1000,chunk_ove
             'pptx': UnstructuredPowerPointLoader,
             'html': WebBaseLoader
         }
-        print(f'file_extension is {file_extension}')
+        print(f'get_Documents_from_url file_extension is {file_extension}')
         current_working_directory = os.getcwd()
         tmp_directory = os.path.join(current_working_directory, "tmp")
+        print("tmp_directory", tmp_directory)
         isExist = os.path.exists(tmp_directory)
         if not isExist:
             os.makedirs(tmp_directory)
         tmp_file_name= str(uuid.uuid1())+ "_"+file_name
+        print("tmp_file_name", tmp_file_name)
         tmp_file_path = os.path.join(tmp_directory, tmp_file_name)
         print("downloading "+url)
         url_to_use= download_doc(url, tmp_file_path)
@@ -107,12 +109,13 @@ async def get_Documents_from_local_path(local_path:str,file_name:str,chunk_size=
             'pptx': UnstructuredPowerPointLoader,
             'html': WebBaseLoader
         }
-        print(f'file_extension is {file_extension}')
+        print(f'get_Documents_from_local_path file_extension is {file_extension}, {local_path}, {file_name}')
     
         loader_function = extension_to_loader.get(file_extension)
-        
+        if not os.path.exists(local_path):
+            raise BAD_REQUEST_HTTPEXCEPTION("File not found")
         if loader_function is None:
-            raise BAD_REQUEST_HTTPEXCEPTION("Unsupported extention")
+            raise BAD_REQUEST_HTTPEXCEPTION("Unsupported extension")
         loader = loader_function(local_path)
         documents:List[Document] = loader.load()
 
