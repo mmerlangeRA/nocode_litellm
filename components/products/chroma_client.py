@@ -5,7 +5,7 @@ from langchain_community.vectorstores import Chroma
 from langchain_openai import OpenAIEmbeddings
 
 chroma_settings = settings().chroma
-collection_name=chroma_settings.collection_name
+collection_name=chroma_settings.product_collection_name
 dockerized = chroma_settings.dockerized
 
 print(f'chromadb collection_name is {collection_name}')

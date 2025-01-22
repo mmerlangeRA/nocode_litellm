@@ -90,6 +90,7 @@ class LangsmithSettings(BaseModel):
 class ChromaSettings(BaseModel):
     directory:str
     collection_name:str
+    product_collection_name:str
     dockerized: bool = True
 
 class Settings(BaseModel):
